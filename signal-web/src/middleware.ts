@@ -2,6 +2,12 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
+interface CookieOptions {
+  name: string
+  value: string
+  [key: string]: unknown
+}
+
 export async function middleware(req: NextRequest) {
   let response = NextResponse.next({
     request: {
@@ -10,14 +16,14 @@ export async function middleware(req: NextRequest) {
   })
 
   const supabase = createServerClient(
-    'https://pqplojyejchgxhwidzro.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxcGxvanllamNoZ3hod2lkenJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU2MjQ1MjgsImV4cCI6MjA3MTIwMDUyOH0.AFe0ATIG3IetkXgouNTMwElDT6C9FTjKsrdyxR0bymg',
+    'https://pqplojyejchgxhwidzro.supabase.co', // Hardcoded URL
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxcGxvanllamNoZ3hod2lkenJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU2MjQ1MjgsImV4cCI6MjA3MTIwMDUyOH0.AFe0ATIG3IetkXgouNTMwElDT6C9FTjKsrdyxR0bymg', // Hardcoded ANON KEY
     {
       cookies: {
         get(name: string) {
           return req.cookies.get(name)?.value
         },
-        set(name: string, value: string, options: any) {
+        set(name: string, value: string, options: CookieOptions) {
           req.cookies.set({
             name,
             value,
@@ -34,7 +40,7 @@ export async function middleware(req: NextRequest) {
             ...options,
           })
         },
-        remove(name: string, options: any) {
+        remove(name: string, options: CookieOptions) {
           req.cookies.set({
             name,
             value: '',

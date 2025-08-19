@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { updatePresence, startHeartbeat, getCoords } from '@/lib/presence'
@@ -8,14 +8,6 @@ import { useSession } from '@/hooks/useSession'
 import ProfileForm from '@/components/ProfileForm'
 import { getDistance } from 'geolib'
 import { formatDistanceToNow } from 'date-fns'
-
-interface Presence {
-  user_id: string
-  is_open: boolean
-  lat: number | null
-  lng: number | null
-  updated_at: string
-}
 
 interface NearbyUser {
   id: string
@@ -45,47 +37,7 @@ export default function Home() {
     }
   }, [user, hasProfile, profileCompleted])
 
-  // Set up realtime subscription for presence changes
-  useEffect(() => {
-    if (!user || !hasProfile) return
-
-    const channel = supabase
-      .channel('presence-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'presence'
-        },
-        () => {
-          // Re-fetch nearby users when presence changes
-          fetchNearbyUsers()
-        }
-      )
-      .subscribe()
-
-    return () => {
-      supabase.removeChannel(channel)
-    }
-  }, [user, hasProfile, myCoords])
-
-  const fetchInitialPresence = async (userId: string) => {
-    const { data } = await supabase
-      .from('presence')
-      .select('is_open, lat, lng')
-      .eq('user_id', userId)
-      .single()
-    
-    if (data) {
-      setIsOpen(data.is_open)
-      if (data.lat && data.lng) {
-        setMyCoords({ lat: data.lat, lng: data.lng })
-      }
-    }
-  }
-
-  const fetchNearbyUsers = async () => {
+  const fetchNearbyUsers = useCallback(async () => {
     if (!user || !myCoords) return
 
     try {
@@ -138,6 +90,46 @@ export default function Home() {
       setNearbyUsers(nearby)
     } catch (error) {
       console.error('Error processing nearby users:', error)
+    }
+  }, [user, myCoords])
+
+  // Set up realtime subscription for presence changes
+  useEffect(() => {
+    if (!user || !hasProfile) return
+
+    const channel = supabase
+      .channel('presence-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'presence'
+        },
+        () => {
+          // Re-fetch nearby users when presence changes
+          fetchNearbyUsers()
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [user, hasProfile, fetchNearbyUsers])
+
+  const fetchInitialPresence = async (userId: string) => {
+    const { data } = await supabase
+      .from('presence')
+      .select('is_open, lat, lng')
+      .eq('user_id', userId)
+      .single()
+    
+    if (data) {
+      setIsOpen(data.is_open)
+      if (data.lat && data.lng) {
+        setMyCoords({ lat: data.lat, lng: data.lng })
+      }
     }
   }
 
@@ -256,7 +248,7 @@ export default function Home() {
             Welcome back, {profile!.first_name}! 👋
           </h1>
           <p className="text-neutral-600">
-            You're now signed in and ready to connect with people nearby.
+            You&apos;re now signed in and ready to connect with people nearby.
           </p>
         </div>
 
@@ -264,7 +256,7 @@ export default function Home() {
         <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-neutral-200/50">
           <h2 className="text-2xl font-bold text-neutral-900 mb-2">Go visible</h2>
           <p className="text-neutral-600 mb-8">
-            Flip it on when you're open to meet. Flip it off when you're done.
+            Flip it on when you&apos;re open to meet. Flip it off when you&apos;re done.
           </p>
           
           <div className="flex items-center justify-between mb-8">
@@ -288,7 +280,7 @@ export default function Home() {
                 ${isOpen ? 'scale-105' : 'scale-100'}
               `}
             >
-              {presenceLoading ? 'Updating...' : (isOpen ? 'I\'m Open' : 'I\'m Closed')}
+              {presenceLoading ? 'Updating...' : (isOpen ? 'I&apos;m Open' : 'I&apos;m Closed')}
               
               {/* Pulsating dot when open */}
               {isOpen && (
@@ -326,7 +318,7 @@ export default function Home() {
             <div className="text-center py-8">
               <p className="text-neutral-500">No nearby users found</p>
               <p className="text-sm text-neutral-400 mt-2">
-                Make sure you're open to receiving signals and have location enabled
+                Make sure you&apos;re open to receiving signals and have location enabled
               </p>
             </div>
           ) : (

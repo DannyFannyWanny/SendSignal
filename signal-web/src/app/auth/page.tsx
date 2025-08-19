@@ -76,8 +76,8 @@ export default function AuthPage() {
       }
 
       setProfile(data)
-    } catch (error) {
-      console.error('Error in fetchProfile:', error)
+    } catch (err) {
+      console.error('Error in fetchProfile:', err)
     }
   }
 
