@@ -1,105 +1,359 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
-import { User } from '@supabase/supabase-js'
+import { updatePresence, startHeartbeat, getCoords } from '@/lib/presence'
+import { useSession } from '@/hooks/useSession'
+import ProfileForm from '@/components/ProfileForm'
+import { getDistance } from 'geolib'
+import { formatDistanceToNow } from 'date-fns'
 
-interface Profile {
+interface Presence {
+  user_id: string
+  is_open: boolean
+  lat: number | null
+  lng: number | null
+  updated_at: string
+}
+
+interface NearbyUser {
+  id: string
   first_name: string | null
+  distance: number
+  freshness: string
+  coords: { lat: number; lng: number }
+  isActive: boolean
 }
 
 export default function Home() {
-  const [user, setUser] = useState<User | null>(null)
-  const [profile, setProfile] = useState<Profile | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { user, profile, loading, isAuthenticated, hasProfile } = useSession()
+  const [isOpen, setIsOpen] = useState(false)
+  const [nearbyUsers, setNearbyUsers] = useState<NearbyUser[]>([])
+  const [myCoords, setMyCoords] = useState<{ lat: number; lng: number } | null>(null)
+  const [locationLoading, setLocationLoading] = useState(false)
+  const [presenceLoading, setPresenceLoading] = useState(false)
+  const [profileCompleted, setProfileCompleted] = useState(false)
   const router = useRouter()
+  const heartbeatRef = useRef<{ stop: () => void } | null>(null)
 
+  // Fetch initial presence when user and profile are available
   useEffect(() => {
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session?.user) {
-        setUser(session.user)
-        await fetchProfile(session.user.id)
-      } else {
-        // Redirect to auth if not authenticated
-        router.push('/auth')
-        return
-      }
-      setLoading(false)
+    if (user && hasProfile && !profileCompleted) {
+      fetchInitialPresence(user.id)
+      setProfileCompleted(true)
     }
+  }, [user, hasProfile, profileCompleted])
 
-    checkSession()
+  // Set up realtime subscription for presence changes
+  useEffect(() => {
+    if (!user || !hasProfile) return
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (event === 'SIGNED_IN' && session?.user) {
-          setUser(session.user)
-          await fetchProfile(session.user.id)
-        } else if (event === 'SIGNED_OUT') {
-          setUser(null)
-          setProfile(null)
-          router.push('/auth')
+    const channel = supabase
+      .channel('presence-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'presence'
+        },
+        () => {
+          // Re-fetch nearby users when presence changes
+          fetchNearbyUsers()
         }
-      }
-    )
+      )
+      .subscribe()
 
-    return () => subscription.unsubscribe()
-  }, [router])
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [user, hasProfile, myCoords])
 
-  const fetchProfile = async (userId: string) => {
+  const fetchInitialPresence = async (userId: string) => {
     const { data } = await supabase
-      .from('profiles')
-      .select('first_name')
-      .eq('id', userId)
+      .from('presence')
+      .select('is_open, lat, lng')
+      .eq('user_id', userId)
       .single()
     
-    setProfile(data)
+    if (data) {
+      setIsOpen(data.is_open)
+      if (data.lat && data.lng) {
+        setMyCoords({ lat: data.lat, lng: data.lng })
+      }
+    }
   }
 
+  const fetchNearbyUsers = async () => {
+    if (!user || !myCoords) return
+
+    try {
+      // Get all open users within last 2 minutes
+      const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000).toISOString()
+      
+      const { data: presenceData, error } = await supabase
+        .from('presence')
+        .select(`
+          user_id,
+          is_open,
+          lat,
+          lng,
+          updated_at,
+          profiles!inner(first_name)
+        `)
+        .eq('is_open', true)
+        .gte('updated_at', twoMinutesAgo)
+        .not('user_id', 'eq', user.id)
+        .not('lat', 'is', null)
+        .not('lng', 'is', null)
+
+      if (error) {
+        console.error('Error fetching nearby users:', error)
+        return
+      }
+
+      // Calculate distances and format data
+      const nearby = presenceData
+        .map(presence => {
+          const coords = { lat: presence.lat!, lng: presence.lng! }
+          const dist = getDistance(myCoords, coords)
+          const updatedAt = new Date(presence.updated_at)
+          const isActive = Date.now() - updatedAt.getTime() < 2 * 60 * 1000 // Within 2 minutes
+          
+          // Handle the profiles join data structure
+          const profileData = Array.isArray(presence.profiles) ? presence.profiles[0] : presence.profiles
+          
+          return {
+            id: presence.user_id,
+            first_name: profileData?.first_name || null,
+            distance: dist,
+            freshness: formatDistanceToNow(updatedAt, { addSuffix: true }),
+            coords,
+            isActive
+          }
+        })
+        .sort((a, b) => a.distance - b.distance)
+
+      setNearbyUsers(nearby)
+    } catch (error) {
+      console.error('Error processing nearby users:', error)
+    }
+  }
+
+  const handleToggleOpen = async (newState: boolean) => {
+    if (!user) return
+
+    setPresenceLoading(true)
+    try {
+      await updatePresence(newState, myCoords)
+      setIsOpen(newState)
+
+      if (newState) {
+        // Start heartbeat
+        if (heartbeatRef.current) {
+          heartbeatRef.current.stop()
+        }
+        heartbeatRef.current = startHeartbeat(true)
+      } else {
+        // Stop heartbeat
+        if (heartbeatRef.current) {
+          heartbeatRef.current.stop()
+          heartbeatRef.current = null
+        }
+      }
+    } catch (error) {
+      console.error('Failed to update presence:', error)
+      // Revert the toggle if it failed
+      setIsOpen(!newState)
+    } finally {
+      setPresenceLoading(false)
+    }
+  }
+
+  const handleRefreshLocation = async () => {
+    setLocationLoading(true)
+    try {
+      const coords = await getCoords()
+      if (coords) {
+        setMyCoords(coords)
+        if (isOpen) {
+          await updatePresence(true, coords)
+        }
+      }
+    } catch (error) {
+      console.error('Failed to refresh location:', error)
+    } finally {
+      setLocationLoading(false)
+    }
+  }
+
+  const formatDistance = (meters: number): string => {
+    if (meters < 1000) {
+      return `${Math.round(meters)}m`
+    }
+    return `${(meters / 1000).toFixed(1)}km`
+  }
+
+  const handleProfileComplete = () => {
+    // This will trigger the useEffect to fetch presence and show the main UI
+    setProfileCompleted(true)
+  }
+
+  // Loading state
   if (loading) {
     return (
-      <main className="min-h-screen bg-neutral-50 flex items-center justify-center p-4">
+      <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 flex items-center justify-center p-4">
         <div className="text-center">
-          <div className="w-8 h-8 border-4 border-primary-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-8 h-8 border-4 border-neutral-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-neutral-600">Loading...</p>
         </div>
       </main>
     )
   }
 
-  if (!user || !profile?.first_name) {
-    return null // Will redirect to auth
-  }
-
-  return (
-    <main className="min-h-screen bg-neutral-50 p-4">
-      <div className="container max-w-4xl mx-auto pt-8">
-        <div className="bg-white rounded-2xl shadow-lg p-8">
-          <h1 className="text-3xl font-bold text-neutral-900 mb-4">
-            Welcome back, {profile.first_name}! 👋
+  // No session - show sign in CTA
+  if (!isAuthenticated) {
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 flex items-center justify-center p-4">
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 max-w-md w-full text-center border border-neutral-200/50">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-6">
+            Welcome to Signal
           </h1>
           <p className="text-neutral-600 mb-8">
+            Sign in to go online and connect with people nearby
+          </p>
+          <button
+            onClick={() => router.push('/auth')}
+            className="w-full bg-neutral-900 hover:bg-neutral-800 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
+          >
+            Sign In
+          </button>
+        </div>
+      </main>
+    )
+  }
+
+  // Session exists but no profile - show profile form
+  if (!hasProfile) {
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 flex items-center justify-center p-4">
+        <ProfileForm 
+          userId={user!.id} 
+          onComplete={handleProfileComplete}
+        />
+      </main>
+    )
+  }
+
+  // Session exists with profile - show presence UI
+  return (
+    <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 p-4">
+      <div className="container max-w-4xl mx-auto pt-8 space-y-6">
+        {/* Welcome Header */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-neutral-200/50">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-4">
+            Welcome back, {profile!.first_name}! 👋
+          </h1>
+          <p className="text-neutral-600">
             You're now signed in and ready to connect with people nearby.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-neutral-50 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-neutral-900 mb-2">
-                Your Profile
-              </h3>
-              <p className="text-neutral-600 text-sm">
-                Manage your profile and preferences
+        </div>
+
+        {/* Presence Control Card */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-neutral-200/50">
+          <h2 className="text-2xl font-bold text-neutral-900 mb-2">Go visible</h2>
+          <p className="text-neutral-600 mb-8">
+            Flip it on when you're open to meet. Flip it off when you're done.
+          </p>
+          
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <p className="text-neutral-700 mb-2 font-medium">Status</p>
+              <p className="text-sm text-neutral-500">
+                {isOpen ? 'You are visible to nearby users' : 'You are hidden from nearby users'}
               </p>
             </div>
-            <div className="bg-neutral-50 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-neutral-900 mb-2">
-                Nearby People
-              </h3>
-              <p className="text-neutral-600 text-sm">
-                Discover and connect with people around you
-              </p>
-            </div>
+            
+            <button
+              onClick={() => handleToggleOpen(!isOpen)}
+              disabled={presenceLoading}
+              className={`
+                relative px-8 py-4 rounded-2xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl
+                ${isOpen 
+                  ? 'bg-green-600 hover:bg-green-700 text-white shadow-green-200' 
+                  : 'bg-neutral-200 hover:bg-neutral-300 text-neutral-800 shadow-neutral-200'
+                }
+                ${presenceLoading ? 'opacity-50 cursor-not-allowed' : ''}
+                ${isOpen ? 'scale-105' : 'scale-100'}
+              `}
+            >
+              {presenceLoading ? 'Updating...' : (isOpen ? 'I\'m Open' : 'I\'m Closed')}
+              
+              {/* Pulsating dot when open */}
+              {isOpen && (
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse motion-reduce:animate-none"></span>
+              )}
+            </button>
           </div>
+
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-neutral-700 mb-2 font-medium">Location</p>
+              <p className="text-sm text-neutral-500">
+                {myCoords 
+                  ? `Lat: ${myCoords.lat.toFixed(4)}, Lng: ${myCoords.lng.toFixed(4)}`
+                  : 'Location not available'
+                }
+              </p>
+            </div>
+            
+            <button
+              onClick={handleRefreshLocation}
+              disabled={locationLoading}
+              className="px-4 py-2 bg-neutral-900 hover:bg-neutral-800 text-white rounded-xl text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50"
+            >
+              {locationLoading ? 'Refreshing...' : 'Refresh Location'}
+            </button>
+          </div>
+        </div>
+
+        {/* Nearby Users Card */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-neutral-200/50">
+          <h2 className="text-2xl font-bold text-neutral-900 mb-6">Nearby Now</h2>
+          
+          {nearbyUsers.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-neutral-500">No nearby users found</p>
+              <p className="text-sm text-neutral-400 mt-2">
+                Make sure you're open to receiving signals and have location enabled
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {nearbyUsers.map((nearbyUser) => (
+                <div key={nearbyUser.id} className="flex items-center justify-between p-4 bg-white/60 backdrop-blur-sm rounded-2xl border border-neutral-200/30 hover:bg-white/80 transition-all duration-200">
+                  <div className="flex items-center space-x-3">
+                    {/* Activity indicator dot */}
+                    <div className={`w-2.5 h-2.5 rounded-full ${nearbyUser.isActive ? 'bg-green-500' : 'bg-neutral-400'}`}></div>
+                    
+                    <div>
+                      <p className="font-medium text-neutral-900">
+                        {nearbyUser.first_name || 'Someone'}
+                      </p>
+                      <p className="text-sm text-neutral-500">
+                        {formatDistance(nearbyUser.distance)} away • {nearbyUser.freshness}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <button className="px-4 py-2 bg-neutral-900 hover:bg-neutral-800 text-white rounded-xl text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg">
+                    Send Signal
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </main>

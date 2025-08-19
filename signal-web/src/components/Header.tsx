@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { User } from '@supabase/supabase-js'
 
@@ -12,22 +12,19 @@ interface Profile {
 export default function Header() {
   const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
-  const [loading, setLoading] = useState(true)
+  const router = useRouter()
 
   useEffect(() => {
-    // Check for existing session
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession()
       if (session?.user) {
         setUser(session.user)
         await fetchProfile(session.user.id)
       }
-      setLoading(false)
     }
 
     checkSession()
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (event === 'SIGNED_IN' && session?.user) {
@@ -55,49 +52,43 @@ export default function Header() {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
-  }
-
-  if (loading) {
-    return (
-      <header className="bg-white border-b border-neutral-200 px-4 py-4">
-        <div className="container mx-auto flex justify-between items-center">
-          <Link href="/" className="text-2xl font-bold text-primary-600">
-            Signal
-          </Link>
-          <div className="w-20 h-6 bg-neutral-200 rounded animate-pulse"></div>
-        </div>
-      </header>
-    )
+    router.push('/auth')
   }
 
   return (
-    <header className="bg-white border-b border-neutral-200 px-4 py-4">
-      <div className="container mx-auto flex justify-between items-center">
-        <Link href="/" className="text-2xl font-bold text-primary-600">
-          Signal
-        </Link>
-        
-        <div className="flex items-center gap-4">
-          {user && profile?.first_name ? (
-            <>
-              <span className="text-neutral-700 font-medium">
-                {profile.first_name}
-              </span>
+    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-neutral-200/50">
+      <div className="container max-w-4xl mx-auto px-4 py-4">
+        <div className="flex items-center justify-between">
+          {/* Brand */}
+          <div className="flex items-center space-x-3">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent">
+              Signal
+            </h1>
+          </div>
+
+          {/* Auth Status */}
+          <div className="flex items-center space-x-4">
+            {user ? (
+              <div className="flex items-center space-x-3">
+                <span className="text-sm text-neutral-600">
+                  {profile?.first_name || 'User'}
+                </span>
+                <button
+                  onClick={handleSignOut}
+                  className="px-3 py-1.5 text-sm text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors duration-200"
+                >
+                  Sign out
+                </button>
+              </div>
+            ) : (
               <button
-                onClick={handleSignOut}
-                className="text-neutral-600 hover:text-neutral-800 text-sm font-medium transition-colors"
+                onClick={() => router.push('/auth')}
+                className="px-4 py-2 text-sm text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors duration-200"
               >
-                Sign out
+                Sign in
               </button>
-            </>
-          ) : (
-            <Link
-              href="/auth"
-              className="text-primary-600 hover:text-primary-700 font-medium transition-colors"
-            >
-              Sign in
-            </Link>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </header>

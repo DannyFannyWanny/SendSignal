@@ -5,37 +5,49 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { User } from '@supabase/supabase-js'
 
+interface Profile {
+  id: string
+  first_name: string | null
+  created_at: string
+}
+
 export default function AuthPage() {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [user, setUser] = useState<User | null>(null)
-  const [showProfileForm, setShowProfileForm] = useState(false)
+  const [profile, setProfile] = useState<Profile | null>(null)
   const [firstName, setFirstName] = useState('')
   const [profileLoading, setProfileLoading] = useState(false)
+  const [shouldRedirect, setShouldRedirect] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
     // Check for existing session
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session?.user) {
-        setUser(session.user)
-        await checkProfile(session.user.id)
+    const getInitialSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        setUser(session?.user || null)
+        
+        if (session?.user) {
+          await fetchProfile(session.user.id)
+        }
+      } catch (error) {
+        console.error('Error getting initial session:', error)
       }
     }
 
-    checkSession()
+    getInitialSession()
 
-    // Listen for auth changes
+    // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        setUser(session?.user || null)
+        
         if (event === 'SIGNED_IN' && session?.user) {
-          setUser(session.user)
-          await checkProfile(session.user.id)
+          await fetchProfile(session.user.id)
         } else if (event === 'SIGNED_OUT') {
-          setUser(null)
-          setShowProfileForm(false)
+          setProfile(null)
         }
       }
     )
@@ -43,24 +55,29 @@ export default function AuthPage() {
     return () => subscription.unsubscribe()
   }, [])
 
-  const checkProfile = async (userId: string) => {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('first_name')
-      .eq('id', userId)
-      .single()
-
-    if (!profile) {
-      // Create profile if missing
-      await supabase
-        .from('profiles')
-        .insert({ id: userId })
-    } else if (!profile.first_name) {
-      // Show profile form if first_name is null
-      setShowProfileForm(true)
-    } else {
-      // Profile complete, redirect to home
+  // Handle redirects in a separate useEffect
+  useEffect(() => {
+    if (shouldRedirect) {
       router.push('/')
+    }
+  }, [shouldRedirect, router])
+
+  const fetchProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, first_name, created_at')
+        .eq('id', userId)
+        .single()
+
+      if (error) {
+        console.error('Error fetching profile:', error)
+        return
+      }
+
+      setProfile(data)
+    } catch (error) {
+      console.error('Error in fetchProfile:', error)
     }
   }
 
@@ -101,31 +118,31 @@ export default function AuthPage() {
         .eq('id', user.id)
 
       if (error) {
-        setMessage(error.message)
-      } else {
-        setShowProfileForm(false)
-        router.push('/')
+        setMessage(`Error: ${error.message}`)
+        return
       }
+
+      // Profile updated successfully
+      setShouldRedirect(true)
     } catch (error) {
-      setMessage('An error occurred. Please try again.')
+      setMessage(`An error occurred: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setProfileLoading(false)
     }
   }
 
-  if (user && !showProfileForm) {
-    // User is authenticated and profile is complete, redirect
-    router.push('/')
+  // Don't render anything if we're about to redirect
+  if (shouldRedirect) {
     return null
   }
 
   return (
-    <main className="min-h-screen bg-neutral-50 flex items-center justify-center p-4">
+    <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 flex items-center justify-center p-4">
       <div className="container max-w-md">
         {!user ? (
           // Sign in card
-          <div className="bg-white rounded-2xl shadow-lg p-8">
-            <h1 className="text-3xl font-bold text-neutral-900 mb-6 text-center">
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-neutral-200/50">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-6 text-center">
               Sign In
             </h1>
             <form onSubmit={handleSignIn} className="space-y-4">
@@ -139,14 +156,14 @@ export default function AuthPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-neutral-500 focus:border-transparent transition-all duration-200"
                   placeholder="Enter your email"
                 />
               </div>
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-primary-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-200"
+                className="w-full bg-neutral-900 hover:bg-neutral-800 disabled:bg-neutral-400 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 {loading ? 'Sending...' : 'Send Magic Link'}
               </button>
@@ -159,8 +176,8 @@ export default function AuthPage() {
           </div>
         ) : (
           // Profile setup form
-          <div className="bg-white rounded-2xl shadow-lg p-8">
-            <h1 className="text-3xl font-bold text-neutral-900 mb-6 text-center">
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-neutral-200/50">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-6 text-center">
               Complete Your Profile
             </h1>
             <form onSubmit={handleProfileSubmit} className="space-y-4">
@@ -174,14 +191,14 @@ export default function AuthPage() {
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   required
-                  className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-neutral-500 focus:border-transparent transition-all duration-200"
                   placeholder="Enter your first name"
                 />
               </div>
               <button
                 type="submit"
                 disabled={profileLoading}
-                className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-primary-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-200"
+                className="w-full bg-neutral-900 hover:bg-neutral-800 disabled:bg-neutral-400 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 {profileLoading ? 'Saving...' : 'Save Profile'}
               </button>
