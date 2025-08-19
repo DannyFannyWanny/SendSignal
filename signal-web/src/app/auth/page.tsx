@@ -5,18 +5,11 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { User } from '@supabase/supabase-js'
 
-interface Profile {
-  id: string
-  first_name: string | null
-  created_at: string
-}
-
 export default function AuthPage() {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [user, setUser] = useState<User | null>(null)
-  const [profile, setProfile] = useState<Profile | null>(null)
   const [firstName, setFirstName] = useState('')
   const [profileLoading, setProfileLoading] = useState(false)
   const [shouldRedirect, setShouldRedirect] = useState(false)
@@ -32,8 +25,8 @@ export default function AuthPage() {
         if (session?.user) {
           await fetchProfile(session.user.id)
         }
-      } catch (error) {
-        console.error('Error getting initial session:', error)
+      } catch (err) {
+        console.error('Error getting initial session:', err)
       }
     }
 
@@ -46,8 +39,6 @@ export default function AuthPage() {
         
         if (event === 'SIGNED_IN' && session?.user) {
           await fetchProfile(session.user.id)
-        } else if (event === 'SIGNED_OUT') {
-          setProfile(null)
         }
       }
     )
@@ -75,7 +66,10 @@ export default function AuthPage() {
         return
       }
 
-      setProfile(data)
+      // If profile exists and has first_name, redirect to home
+      if (data && data.first_name) {
+        setShouldRedirect(true)
+      }
     } catch (err) {
       console.error('Error in fetchProfile:', err)
     }
@@ -99,7 +93,7 @@ export default function AuthPage() {
       } else {
         setMessage('Check your email for the magic link!')
       }
-    } catch (error) {
+    } catch (err) {
       setMessage('An error occurred. Please try again.')
     } finally {
       setLoading(false)
@@ -124,8 +118,8 @@ export default function AuthPage() {
 
       // Profile updated successfully
       setShouldRedirect(true)
-    } catch (error) {
-      setMessage(`An error occurred: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    } catch (err) {
+      setMessage(`An error occurred: ${err instanceof Error ? err.message : 'Unknown error'}`)
     } finally {
       setProfileLoading(false)
     }
