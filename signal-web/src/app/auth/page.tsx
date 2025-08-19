@@ -70,8 +70,8 @@ export default function AuthPage() {
       if (data && data.first_name) {
         setShouldRedirect(true)
       }
-    } catch (err) {
-      console.error('Error in fetchProfile:', err)
+    } catch {
+      console.error('Error in fetchProfile')
     }
   }
 
