@@ -75,8 +75,7 @@ export default function Home() {
           is_open,
           lat,
           lng,
-          updated_at,
-          profiles!inner(first_name)
+          updated_at
         `)
         .eq('is_open', true)
         .gte('updated_at', twoMinutesAgo)
@@ -98,6 +97,27 @@ export default function Home() {
 
       console.log('📍 Valid presence records (with coordinates):', validPresenceData.length)
 
+      // Fetch profiles for all users in one query
+      const userIds = validPresenceData.map(p => p.user_id)
+      let profilesData: any[] = []
+      
+      if (userIds.length > 0) {
+        const { data: profiles, error: profilesError } = await supabase
+          .from('profiles')
+          .select('id, first_name')
+          .in('id', userIds)
+        
+        if (profilesError) {
+          console.error('❌ Error fetching profiles:', profilesError)
+        } else {
+          profilesData = profiles || []
+          console.log('👤 Fetched profiles:', profilesData.length)
+        }
+      }
+
+      // Create a map for quick profile lookup
+      const profilesMap = new Map(profilesData.map(p => [p.id, p]))
+
       // Calculate distances and format data
       const nearby = validPresenceData
         .map(presence => {
@@ -115,11 +135,11 @@ export default function Home() {
           })
           
           // Handle the profiles join data structure
-          const profileData = Array.isArray(presence.profiles) ? presence.profiles[0] : presence.profiles
+          const profileData = profilesMap.get(presence.user_id)
           
           return {
             id: presence.user_id,
-            first_name: profileData?.first_name || null,
+            first_name: profileData?.first_name || 'Someone',
             distance: dist,
             freshness: formatDistanceToNow(updatedAt, { addSuffix: true }),
             coords,
