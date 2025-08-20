@@ -81,8 +81,6 @@ export default function Home() {
         .eq('is_open', true)
         .gte('updated_at', twoMinutesAgo)
         .not('user_id', 'eq', user.id)
-        .not('lat', 'is', null)
-        .not('lng', 'is', null)
 
       console.log('📊 Raw Supabase response:', { data: presenceData, error })
 
@@ -93,8 +91,15 @@ export default function Home() {
 
       console.log('👥 Found presence records:', presenceData?.length || 0)
 
+      // Filter out records with null coordinates in JavaScript
+      const validPresenceData = presenceData?.filter(presence => 
+        presence.lat !== null && presence.lng !== null
+      ) || []
+
+      console.log('📍 Valid presence records (with coordinates):', validPresenceData.length)
+
       // Calculate distances and format data
-      const nearby = presenceData
+      const nearby = validPresenceData
         .map(presence => {
           const coords = { lat: presence.lat!, lng: presence.lng! }
           const dist = getDistance(myCoords, coords)
