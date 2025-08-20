@@ -190,114 +190,133 @@ export default function AuthPage() {
       minHeight: '100vh',
       padding: '1rem'
     }}>
-      <div className="w-full max-w-sm mx-auto px-2 sm:px-0">
+      <div className="w-full max-w-xs flex flex-col items-center justify-center">
         {!user ? (
-          // Sign in/up card
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-4 sm:p-5 border border-neutral-200/50" style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-            backdropFilter: 'blur(8px)',
-            borderRadius: '1rem',
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-            padding: '1rem',
-            border: '1px solid rgba(229, 229, 229, 0.5)',
-            width: '100%'
-          }}>
-            <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-3 sm:mb-4 text-center" style={{
-              background: 'linear-gradient(to right, #171717, #525252)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              fontSize: '1.125rem',
-              fontWeight: 'bold',
-              marginBottom: '0.75rem',
-              textAlign: 'center'
+          <>
+            {/* Sign in/up card */}
+            <div className="w-full bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-4 sm:p-5 border border-neutral-200/50" style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.8)',
+              backdropFilter: 'blur(8px)',
+              borderRadius: '1rem',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+              padding: '1rem',
+              border: '1px solid rgba(229, 229, 229, 0.5)'
             }}>
-              {isSignUp ? 'Sign Up' : 'Sign In'}
-            </h1>
-            
-            <form onSubmit={handleAuth} className="space-y-4 sm:space-y-5">
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-neutral-700 mb-2">
-                  Email
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-500 focus:border-transparent transition-all duration-200 text-base"
-                  placeholder="Enter your email"
-                  style={{
-                    borderRadius: '0.5rem',
-                    border: '1px solid #d4d4d4',
-                    transition: 'all 0.2s'
-                  }}
-                />
-              </div>
+              <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-3 sm:mb-4 text-center" style={{
+                background: 'linear-gradient(to right, #171717, #525252)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                fontSize: '1.125rem',
+                fontWeight: 'bold',
+                marginBottom: '0.75rem',
+                textAlign: 'center'
+              }}>
+                {isSignUp ? 'Sign Up' : 'Sign In'}
+              </h1>
               
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-neutral-700 mb-2">
-                  Password
-                </label>
-                <input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-500 focus:border-transparent transition-all duration-200 text-base"
-                  placeholder="Enter your password"
-                  style={{
-                    borderRadius: '0.5rem',
-                    border: '1px solid #d4d4d4',
-                    transition: 'all 0.2s'
-                  }}
-                />
-              </div>
+              <form onSubmit={handleAuth} className="space-y-6 sm:space-y-7">
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-neutral-700 mb-2">
+                    Email
+                  </label>
+                  <input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-500 focus:border-transparent transition-all duration-200 text-base"
+                    placeholder="Enter your email"
+                    style={{
+                      borderRadius: '0.5rem',
+                      border: '1px solid #d4d4d4',
+                      transition: 'all 0.2s'
+                    }}
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="password" className="block text-sm font-medium text-neutral-700 mb-2">
+                    Password
+                  </label>
+                  <input
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-500 focus:border-transparent transition-all duration-200 text-base"
+                    placeholder="Enter your password"
+                    style={{
+                      borderRadius: '0.5rem',
+                      border: '1px solid #d4d4d4',
+                      transition: 'all 0.2s'
+                    }}
+                  />
+                </div>
+                
+                <div className="text-center">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="inline-block bg-neutral-900 hover:bg-neutral-800 disabled:bg-neutral-400 text-white font-semibold py-2 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg text-base"
+                    style={{
+                      borderRadius: '0.5rem',
+                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    {loading ? 'Processing...' : (isSignUp ? 'Sign Up' : 'Sign In')}
+                  </button>
+                </div>
+              </form>
               
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-neutral-900 hover:bg-neutral-800 disabled:bg-neutral-400 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg text-base"
-                style={{
-                  borderRadius: '0.5rem',
-                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                  transition: 'all 0.2s'
-                }}
-              >
-                {loading ? 'Processing...' : (isSignUp ? 'Sign Up' : 'Sign In')}
-              </button>
-            </form>
-            
-            <div className="mt-5 sm:mt-6 text-center">
-              <button
-                onClick={() => setIsSignUp(!isSignUp)}
-                className="text-sm text-neutral-600 hover:text-neutral-900 underline px-2 py-1"
-                style={{
-                  transition: 'color 0.2s'
-                }}
-              >
-                {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
-              </button>
+              {message && (
+                <p className="mt-3 text-sm text-center text-neutral-600">
+                  {message}
+                </p>
+              )}
             </div>
             
-            {message && (
-              <p className="mt-3 text-sm text-center text-neutral-600">
-                {message}
-              </p>
+            {/* Create Account Card - Only show on sign-in screen */}
+            {!isSignUp && (
+              <div className="w-full mt-6 bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg p-4 border border-neutral-200/30" style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                backdropFilter: 'blur(8px)',
+                borderRadius: '1rem',
+                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                padding: '1rem',
+                border: '1px solid rgba(229, 229, 229, 0.3)',
+                marginTop: '1.5rem'
+              }}>
+                <div className="text-center">
+                  <p className="text-sm text-neutral-600 mb-3">
+                    Don't have an account?
+                  </p>
+                  <button
+                    onClick={() => setIsSignUp(!isSignUp)}
+                    className="inline-block bg-neutral-100 hover:bg-neutral-200 text-neutral-800 font-medium py-2 px-4 rounded-lg transition-all duration-200 border border-neutral-300 hover:border-neutral-400"
+                    style={{
+                      borderRadius: '0.5rem',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    Create Account
+                  </button>
+                </div>
+              </div>
             )}
-          </div>
+          </>
         ) : (
           // Profile setup form
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-4 sm:p-5 border border-neutral-200/50" style={{
+          <div className="w-full bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-4 sm:p-5 border border-neutral-200/50" style={{
             backgroundColor: 'rgba(255, 255, 255, 0.8)',
             backdropFilter: 'blur(8px)',
             borderRadius: '1rem',
             boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
             padding: '1rem',
-            border: '1px solid rgba(229, 229, 229, 0.5)',
-            width: '100%'
+            border: '1px solid rgba(229, 229, 229, 0.5)'
           }}>
             <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-3 sm:mb-4 text-center" style={{
               background: 'linear-gradient(to right, #171717, #525252)',
@@ -311,7 +330,7 @@ export default function AuthPage() {
             }}>
               Complete Your Profile
             </h1>
-            <form onSubmit={handleProfileSubmit} className="space-y-4 sm:space-y-5">
+            <form onSubmit={handleProfileSubmit} className="space-y-6 sm:space-y-7">
               <div>
                 <label htmlFor="firstName" className="block text-sm font-medium text-neutral-700 mb-2">
                   First Name
@@ -331,18 +350,20 @@ export default function AuthPage() {
                   }}
                 />
               </div>
-              <button
-                type="submit"
-                disabled={profileLoading}
-                className="w-full bg-neutral-900 hover:bg-neutral-800 disabled:bg-neutral-400 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg text-base"
-                style={{
-                  borderRadius: '0.5rem',
-                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                  transition: 'all 0.2s'
-                }}
-              >
-                {profileLoading ? 'Saving...' : 'Save Profile'}
-              </button>
+              <div className="text-center">
+                <button
+                  type="submit"
+                  disabled={profileLoading}
+                  className="inline-block bg-neutral-900 hover:bg-neutral-800 disabled:bg-neutral-400 text-white font-semibold py-2 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg text-base"
+                  style={{
+                    borderRadius: '0.5rem',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  {profileLoading ? 'Saving...' : 'Save Profile'}
+                </button>
+              </div>
             </form>
             {message && (
               <p className="mt-3 text-sm text-center text-neutral-600">

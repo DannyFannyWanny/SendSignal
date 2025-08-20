@@ -314,7 +314,7 @@ export default function Home() {
         minHeight: '100vh',
         padding: '1rem'
       }}>
-        <div className="w-full max-w-sm mx-auto px-2 sm:px-0">
+        <div className="w-full max-w-sm mx-auto flex items-center justify-center">
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-4 sm:p-5 border border-neutral-200/50" style={{
             backgroundColor: 'rgba(255, 255, 255, 0.8)',
             backdropFilter: 'blur(8px)',
@@ -338,13 +338,13 @@ export default function Home() {
             </h1>
             
             <p className="text-neutral-600 text-center mb-5 sm:mb-6 text-sm">
-              Sign in to go online and connect with people nearby
+              Instantly meet new people nearby.
             </p>
             
             <div className="text-center">
               <button
                 onClick={() => router.push('/auth')}
-                className="w-full bg-neutral-900 hover:bg-neutral-800 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg text-base"
+                className="inline-block bg-neutral-900 hover:bg-neutral-800 text-white font-semibold py-2 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg text-base"
                 style={{
                   borderRadius: '0.5rem',
                   boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
@@ -409,82 +409,6 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Presence Control Card */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 border border-neutral-200/50" style={{
-          backgroundColor: 'rgba(255, 255, 255, 0.8)',
-          backdropFilter: 'blur(8px)',
-          borderRadius: '1.5rem',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-          padding: '1.5rem',
-          border: '1px solid rgba(229, 229, 229, 0.5)'
-        }}>
-          <h2 className="text-xl font-bold text-neutral-900 mb-2">Go visible</h2>
-          <p className="text-neutral-600 mb-6 text-sm">
-            Flip it on when you&apos;re open to meet. Flip it off when you&apos;re done.
-          </p>
-          
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <p className="text-neutral-700 mb-1 font-medium text-sm">Status</p>
-              <p className="text-xs text-neutral-500">
-                {isOpen ? 'You are currently visible to nearby users' : 'You are currently hidden from nearby users'}
-              </p>
-              <p className="text-xs text-neutral-400 mt-1">
-                {isOpen ? 'Click "Go Inactive" to hide yourself' : 'Click "Go Active" to become visible'}
-              </p>
-            </div>
-            
-            <button
-              onClick={() => handleToggleOpen(!isOpen)}
-              disabled={presenceLoading}
-              className={`
-                relative px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-md hover:shadow-lg
-                ${isOpen 
-                  ? 'bg-green-600 hover:bg-green-700 text-white shadow-green-200' 
-                  : 'bg-neutral-200 hover:bg-neutral-300 text-neutral-800 shadow-neutral-200'
-                }
-                ${presenceLoading ? 'opacity-50 cursor-not-allowed' : ''}
-                ${isOpen ? 'scale-105' : 'scale-100'}
-              `}
-              style={{
-                borderRadius: '0.75rem',
-                transition: 'all 0.3s'
-              }}
-            >
-              {presenceLoading ? 'Updating...' : (isOpen ? 'Go Inactive' : 'Go Active')}
-              
-              {/* Pulsating dot when open */}
-              {isOpen && (
-                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse motion-reduce:animate-none"></span>
-              )}
-            </button>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-neutral-700 mb-1 font-medium text-sm">Location</p>
-              <p className="text-xs text-neutral-500">
-                {myCoords 
-                  ? `Lat: ${myCoords.lat.toFixed(4)}, Lng: ${myCoords.lng.toFixed(4)}`
-                  : 'Location not available'
-                }
-              </p>
-            </div>
-            
-            <button
-              onClick={handleRefreshLocation}
-              disabled={locationLoading}
-              className="px-3 py-2 bg-neutral-900 hover:bg-neutral-800 text-white rounded-lg text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
-              style={{
-                borderRadius: '0.5rem',
-                transition: 'all 0.2s'
-              }}
-            >
-              {locationLoading ? 'Refreshing...' : 'Refresh Location'}
-            </button>
-          </div>
-        </div>
-
         {/* Nearby Users Card */}
         <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 border border-neutral-200/50" style={{
           backgroundColor: 'rgba(255, 255, 255, 0.8)',
@@ -543,6 +467,81 @@ export default function Home() {
               ))}
             </div>
           )}
+        </div>
+
+        {/* Presence Control Card */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 border border-neutral-200/50" style={{
+          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+          backdropFilter: 'blur(8px)',
+          borderRadius: '1.5rem',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+          padding: '1.5rem',
+          border: '1px solid rgba(229, 229, 229, 0.5)'
+        }}>
+          <h2 className="text-xl font-bold text-neutral-900 mb-2">Go visible</h2>
+          <p className="text-neutral-600 mb-6 text-sm">
+            Flip it on when you&apos;re open to meet. Flip it off when you&apos;re done.
+          </p>
+          
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <p className="text-neutral-700 mb-1 font-medium text-sm">Status</p>
+              <p className="text-xs text-neutral-500">
+                {isOpen ? 'You are currently visible to nearby users' : 'You are currently hidden from nearby users'}
+              </p>
+              <p className="text-xs text-neutral-400 mt-1">
+                {isOpen ? 'Click "Go Inactive" to hide yourself' : 'Click "Go Active" to become visible'}
+              </p>
+            </div>
+            
+            <button
+              onClick={() => handleToggleOpen(!isOpen)}
+              disabled={presenceLoading}
+              className={`
+                relative px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-md hover:shadow-lg
+                ${isOpen 
+                  ? 'bg-green-600 hover:bg-green-700 text-white shadow-green-200' : 'bg-neutral-200 hover:bg-neutral-300 text-neutral-800 shadow-neutral-200'
+                }
+                ${presenceLoading ? 'opacity-50 cursor-not-allowed' : ''}
+                ${isOpen ? 'scale-105' : 'scale-100'}
+              `}
+              style={{
+                borderRadius: '0.75rem',
+                transition: 'all 0.3s'
+              }}
+            >
+              {presenceLoading ? 'Updating...' : (isOpen ? 'Go Inactive' : 'Go Active')}
+              
+              {/* Pulsating dot when open */}
+              {isOpen && (
+                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse motion-reduce:animate-none"></span>
+              )}
+            </button>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-neutral-700 mb-1 font-medium text-sm">Location</p>
+              <p className="text-xs text-neutral-500">
+                {myCoords 
+                  ? `Lat: ${myCoords.lat.toFixed(4)}, Lng: ${myCoords.lng.toFixed(4)}`
+                  : 'Location not available'
+                }
+              </p>
+            </div>
+            
+            <button
+              onClick={handleRefreshLocation}
+              disabled={locationLoading}
+              className="px-3 py-2 bg-neutral-900 hover:bg-neutral-800 text-white rounded-lg text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
+              style={{
+                borderRadius: '0.5rem',
+                transition: 'all 0.2s'
+              }}
+            >
+              {locationLoading ? 'Refreshing...' : 'Refresh Location'}
+            </button>
+          </div>
         </div>
       </div>
     </main>
