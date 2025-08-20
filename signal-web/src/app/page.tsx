@@ -342,11 +342,30 @@ export default function Home() {
 
   // Session exists with profile - show presence UI
   return (
-    <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 p-4">
+    <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 p-4" style={{
+      background: 'linear-gradient(to bottom right, #fafafa, #ffffff, #f5f5f5)',
+      minHeight: '100vh',
+      padding: '1rem'
+    }}>
       <div className="container max-w-4xl mx-auto pt-8 space-y-6">
         {/* Welcome Header */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-neutral-200/50">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-4">
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-neutral-200/50" style={{
+          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+          backdropFilter: 'blur(8px)',
+          borderRadius: '1.5rem',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+          padding: '2rem',
+          border: '1px solid rgba(229, 229, 229, 0.5)'
+        }}>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-4" style={{
+            background: 'linear-gradient(to right, #171717, #525252)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            fontSize: '1.875rem',
+            fontWeight: 'bold',
+            marginBottom: '1rem'
+          }}>
             Welcome back, {profile!.first_name}! 👋
           </h1>
           <p className="text-neutral-600">
@@ -355,7 +374,14 @@ export default function Home() {
         </div>
 
         {/* Presence Control Card */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-neutral-200/50">
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-neutral-200/50" style={{
+          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+          backdropFilter: 'blur(8px)',
+          borderRadius: '1.5rem',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+          padding: '2rem',
+          border: '1px solid rgba(229, 229, 229, 0.5)'
+        }}>
           <h2 className="text-2xl font-bold text-neutral-900 mb-2">Go visible</h2>
           <p className="text-neutral-600 mb-8">
             Flip it on when you&apos;re open to meet. Flip it off when you&apos;re done.
@@ -416,7 +442,14 @@ export default function Home() {
         </div>
 
         {/* Nearby Users Card */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-neutral-200/50">
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-neutral-200/50" style={{
+          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+          backdropFilter: 'blur(8px)',
+          borderRadius: '1.5rem',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+          padding: '2rem',
+          border: '1px solid rgba(229, 229, 229, 0.5)'
+        }}>
           <h2 className="text-2xl font-bold text-neutral-900 mb-6">Nearby Now</h2>
           
           {nearbyUsers.length === 0 ? (
@@ -429,10 +462,22 @@ export default function Home() {
           ) : (
             <div className="space-y-3">
               {nearbyUsers.map((nearbyUser) => (
-                <div key={nearbyUser.id} className="flex items-center justify-between p-4 bg-white/60 backdrop-blur-sm rounded-2xl border border-neutral-200/30 hover:bg-white/80 transition-all duration-200">
+                <div key={nearbyUser.id} className="flex items-center justify-between p-4 bg-white/60 backdrop-blur-sm rounded-2xl border border-neutral-200/30 hover:bg-white/80 transition-all duration-200" style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                  backdropFilter: 'blur(8px)',
+                  borderRadius: '1rem',
+                  border: '1px solid rgba(229, 229, 229, 0.3)',
+                  padding: '1rem',
+                  transition: 'all 0.2s'
+                }}>
                   <div className="flex items-center space-x-3">
                     {/* Activity indicator dot */}
-                    <div className={`w-2.5 h-2.5 rounded-full ${nearbyUser.isActive ? 'bg-green-500' : 'bg-neutral-400'}`}></div>
+                    <div className={`w-2.5 h-2.5 rounded-full ${nearbyUser.isActive ? 'bg-green-500' : 'bg-neutral-400'}`} style={{
+                      width: '0.625rem',
+                      height: '0.625rem',
+                      borderRadius: '50%',
+                      backgroundColor: nearbyUser.isActive ? '#10b981' : '#9ca3af'
+                    }}></div>
                     
                     <div>
                       <p className="font-medium text-neutral-900">
