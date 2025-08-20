@@ -99,7 +99,7 @@ export default function Home() {
 
       // Fetch profiles for all users in one query
       const userIds = validPresenceData.map(p => p.user_id)
-      let profilesData: any[] = []
+      let profilesData: { id: string; first_name: string | null }[] = []
       
       if (userIds.length > 0) {
         const { data: profiles, error: profilesError } = await supabase
