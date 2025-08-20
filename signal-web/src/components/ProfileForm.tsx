@@ -41,22 +41,22 @@ export default function ProfileForm({ userId, onComplete }: ProfileFormProps) {
   }
 
   return (
-    <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 border border-neutral-200/50" style={{
+    <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-4 sm:p-5 border border-neutral-200/50" style={{
       backgroundColor: 'rgba(255, 255, 255, 0.8)',
       backdropFilter: 'blur(8px)',
-      borderRadius: '1.5rem',
+      borderRadius: '1rem',
       boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-      padding: '1.5rem',
+      padding: '1rem',
       border: '1px solid rgba(229, 229, 229, 0.5)',
       maxWidth: '24rem',
       width: '100%'
     }}>
-      <h2 className="text-xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-3 text-center" style={{
+      <h2 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-3 sm:mb-4 text-center" style={{
         background: 'linear-gradient(to right, #171717, #525252)',
         WebkitBackgroundClip: 'text',
         WebkitTextFillColor: 'transparent',
         backgroundClip: 'text',
-        fontSize: '1.25rem',
+        fontSize: '1.125rem',
         fontWeight: 'bold',
         marginBottom: '0.75rem',
         textAlign: 'center'
@@ -67,9 +67,9 @@ export default function ProfileForm({ userId, onComplete }: ProfileFormProps) {
         Please provide your first name to continue
       </p>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
         <div>
-          <label htmlFor="firstName" className="block text-xs font-medium text-neutral-700 mb-2">
+          <label htmlFor="firstName" className="block text-sm font-medium text-neutral-700 mb-2">
             First Name
           </label>
           <input
@@ -78,11 +78,11 @@ export default function ProfileForm({ userId, onComplete }: ProfileFormProps) {
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
             required
-            className="w-full px-3 py-1.5 border border-neutral-300 rounded-md focus:ring-2 focus:ring-neutral-500 focus:border-transparent transition-all duration-200"
+            className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-500 focus:border-transparent transition-all duration-200 text-base"
             placeholder="Enter your first name"
             disabled={loading}
             style={{
-              borderRadius: '0.375rem',
+              borderRadius: '0.5rem',
               border: '1px solid #d4d4d4',
               transition: 'all 0.2s'
             }}
@@ -92,9 +92,9 @@ export default function ProfileForm({ userId, onComplete }: ProfileFormProps) {
         <button
           type="submit"
           disabled={loading || !firstName.trim()}
-          className="w-full bg-neutral-900 hover:bg-neutral-800 disabled:bg-neutral-400 text-white font-semibold py-2 px-3 rounded-md transition-all duration-200 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
+          className="w-full bg-neutral-900 hover:bg-neutral-800 disabled:bg-neutral-400 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 disabled:cursor-not-allowed shadow-md hover:shadow-lg text-base"
           style={{
-            borderRadius: '0.375rem',
+            borderRadius: '0.5rem',
             boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
             transition: 'all 0.2s'
           }}
@@ -104,7 +104,7 @@ export default function ProfileForm({ userId, onComplete }: ProfileFormProps) {
       </form>
 
       {message && (
-        <p className="mt-3 text-xs text-center text-neutral-600">
+        <p className="mt-3 text-sm text-center text-neutral-600">
           {message}
         </p>
       )}
