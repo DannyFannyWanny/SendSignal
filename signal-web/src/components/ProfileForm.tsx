@@ -67,9 +67,9 @@ export default function ProfileForm({ userId, onComplete }: ProfileFormProps) {
         Please provide your first name to continue
       </p>
 
-      <form onSubmit={handleSubmit} className="space-y-3">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="firstName" className="block text-sm font-medium text-neutral-700 mb-1">
+          <label htmlFor="firstName" className="block text-xs font-medium text-neutral-700 mb-2">
             First Name
           </label>
           <input
@@ -78,11 +78,11 @@ export default function ProfileForm({ userId, onComplete }: ProfileFormProps) {
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
             required
-            className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-500 focus:border-transparent transition-all duration-200"
+            className="w-full px-3 py-1.5 border border-neutral-300 rounded-md focus:ring-2 focus:ring-neutral-500 focus:border-transparent transition-all duration-200"
             placeholder="Enter your first name"
             disabled={loading}
             style={{
-              borderRadius: '0.5rem',
+              borderRadius: '0.375rem',
               border: '1px solid #d4d4d4',
               transition: 'all 0.2s'
             }}
@@ -92,9 +92,9 @@ export default function ProfileForm({ userId, onComplete }: ProfileFormProps) {
         <button
           type="submit"
           disabled={loading || !firstName.trim()}
-          className="w-full bg-neutral-900 hover:bg-neutral-800 disabled:bg-neutral-400 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-200 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
+          className="w-full bg-neutral-900 hover:bg-neutral-800 disabled:bg-neutral-400 text-white font-semibold py-2 px-3 rounded-md transition-all duration-200 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
           style={{
-            borderRadius: '0.5rem',
+            borderRadius: '0.375rem',
             boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
             transition: 'all 0.2s'
           }}
@@ -104,7 +104,7 @@ export default function ProfileForm({ userId, onComplete }: ProfileFormProps) {
       </form>
 
       {message && (
-        <p className="mt-3 text-sm text-center text-neutral-600">
+        <p className="mt-3 text-xs text-center text-neutral-600">
           {message}
         </p>
       )}
