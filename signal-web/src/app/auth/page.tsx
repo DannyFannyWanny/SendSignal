@@ -190,7 +190,7 @@ export default function AuthPage() {
       minHeight: '100vh',
       padding: '1rem'
     }}>
-      <div className="container max-w-sm">
+      <div className="w-full max-w-sm mx-auto">
         {!user ? (
           // Sign in/up card
           <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 border border-neutral-200/50" style={{
@@ -200,7 +200,6 @@ export default function AuthPage() {
             boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
             padding: '1.5rem',
             border: '1px solid rgba(229, 229, 229, 0.5)',
-            maxWidth: '24rem',
             width: '100%'
           }}>
             <h1 className="text-2xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-4 text-center" style={{
@@ -298,7 +297,6 @@ export default function AuthPage() {
             boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
             padding: '1.5rem',
             border: '1px solid rgba(229, 229, 229, 0.5)',
-            maxWidth: '24rem',
             width: '100%'
           }}>
             <h1 className="text-2xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-4 text-center" style={{

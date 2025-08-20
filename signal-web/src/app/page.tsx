@@ -306,23 +306,55 @@ export default function Home() {
     )
   }
 
-  // No session - show sign in CTA
+  // No session - show CTA
   if (!isAuthenticated) {
     return (
-      <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 flex items-center justify-center p-4">
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 max-w-md w-full text-center border border-neutral-200/50">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-6">
-            Welcome to Signal
-          </h1>
-          <p className="text-neutral-600 mb-8">
-            Sign in to go online and connect with people nearby
-          </p>
-          <button
-            onClick={() => router.push('/auth')}
-            className="w-full bg-neutral-900 hover:bg-neutral-800 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
-          >
-            Sign In
-          </button>
+      <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 flex items-center justify-center p-4" style={{
+        background: 'linear-gradient(to bottom right, #fafafa, #ffffff, #f5f5f5)',
+        minHeight: '100vh',
+        padding: '1rem'
+      }}>
+        <div className="w-full max-w-sm mx-auto">
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 border border-neutral-200/50" style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            backdropFilter: 'blur(8px)',
+            borderRadius: '1.5rem',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            padding: '1.5rem',
+            border: '1px solid rgba(229, 229, 229, 0.5)',
+            width: '100%'
+          }}>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-4 text-center" style={{
+              background: 'linear-gradient(to right, #171717, #525252)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              fontSize: '1.5rem',
+              fontWeight: 'bold',
+              marginBottom: '1rem',
+              textAlign: 'center'
+            }}>
+              Welcome to Signal
+            </h1>
+            
+            <p className="text-neutral-600 text-center mb-6 text-sm">
+              Sign in to go online and connect with people nearby
+            </p>
+            
+            <div className="text-center">
+              <button
+                onClick={() => router.push('/auth')}
+                className="w-full bg-neutral-900 hover:bg-neutral-800 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
+                style={{
+                  borderRadius: '0.5rem',
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                  transition: 'all 0.2s'
+                }}
+              >
+                Sign In
+              </button>
+            </div>
+          </div>
         </div>
       </main>
     )
@@ -331,7 +363,11 @@ export default function Home() {
   // Session exists but no profile - show profile form
   if (!hasProfile) {
     return (
-      <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 flex items-center justify-center p-4">
+      <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 flex items-center justify-center p-4" style={{
+        background: 'linear-gradient(to bottom right, #fafafa, #ffffff, #f5f5f5)',
+        minHeight: '100vh',
+        padding: '1rem'
+      }}>
         <ProfileForm 
           userId={user!.id} 
           onComplete={handleProfileComplete}
