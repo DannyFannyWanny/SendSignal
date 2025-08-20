@@ -64,6 +64,11 @@ export default function AuthPage() {
         .single()
 
       if (error) {
+        if (error.code === 'PGRST116') { // No rows returned
+          // Profile doesn't exist, create one
+          await createProfileIfNotExists(userId)
+          return
+        }
         console.error('Error fetching profile:', error)
         return
       }
@@ -109,7 +114,10 @@ export default function AuthPage() {
         setMessage('Please check your email to confirm your account, then sign in.')
         setIsSignUp(false)
       } else if (result.data.session) {
-        // Successfully signed in
+        // Successfully signed in - create profile if it doesn't exist
+        if (isSignUp && result.data.user) {
+          await createProfileIfNotExists(result.data.user.id)
+        }
         setMessage('Successfully signed in!')
       }
     } catch (err) {
@@ -119,16 +127,43 @@ export default function AuthPage() {
     }
   }
 
+  const createProfileIfNotExists = async (userId: string) => {
+    try {
+      // Try to insert a new profile, ignore if it already exists
+      const { error } = await supabase
+        .from('profiles')
+        .insert({ 
+          id: userId, 
+          first_name: null,
+          created_at: new Date().toISOString()
+        })
+        .select()
+        .single()
+
+      if (error && error.code !== '23505') { // 23505 is unique constraint violation
+        console.error('Error creating profile:', error)
+      }
+    } catch (err) {
+      console.error('Error in createProfileIfNotExists:', err)
+    }
+  }
+
   const handleProfileSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!user || !firstName.trim()) return
 
     setProfileLoading(true)
     try {
+      // Use upsert to create or update the profile
       const { error } = await supabase
         .from('profiles')
-        .update({ first_name: firstName.trim() })
-        .eq('id', user.id)
+        .upsert({ 
+          id: user.id, 
+          first_name: firstName.trim(),
+          created_at: new Date().toISOString()
+        }, {
+          onConflict: 'id'
+        })
 
       if (error) {
         setMessage(`Error: ${error.message}`)
