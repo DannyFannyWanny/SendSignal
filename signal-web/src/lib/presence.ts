@@ -44,28 +44,45 @@ export async function getCoords(): Promise<{ lat: number; lng: number } | null> 
  */
 export async function updatePresence(isOpen: boolean, coords?: { lat: number; lng: number } | null): Promise<void> {
   try {
+    console.log('updatePresence called with:', { isOpen, coords })
+    
     let finalCoords = coords
 
     // If opening and no coords provided, try to get them
     if (isOpen && !finalCoords) {
+      console.log('Getting coordinates...')
       finalCoords = await getCoords()
+      console.log('Coordinates received:', finalCoords)
     }
 
-    // Call the Supabase RPC function
-    const { error } = await supabase.rpc('upsert_presence', {
+    console.log('About to call Supabase RPC with:', {
       _is_open: isOpen,
       _lat: finalCoords?.lat || null,
       _lng: finalCoords?.lng || null
     })
+
+    // Call the Supabase RPC function
+    const { data, error } = await supabase.rpc('upsert_presence', {
+      _is_open: isOpen,
+      _lat: finalCoords?.lat || null,
+      _lng: finalCoords?.lng || null
+    })
+
+    console.log('Supabase RPC response:', { data, error })
 
     if (error) {
       console.error('Failed to update presence:', error)
       throw error
     }
 
-    console.log('Presence updated:', { isOpen, lat: finalCoords?.lat, lng: finalCoords?.lng })
+    console.log('Presence updated successfully:', { isOpen, lat: finalCoords?.lat, lng: finalCoords?.lng })
   } catch (error) {
     console.error('Error updating presence:', error)
+    console.error('Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      error
+    })
     throw error
   }
 }
