@@ -317,7 +317,10 @@ export default function Home() {
             <div>
               <p className="text-neutral-700 mb-2 font-medium">Status</p>
               <p className="text-sm text-neutral-500">
-                {isOpen ? 'You are visible to nearby users' : 'You are hidden from nearby users'}
+                {isOpen ? 'You are currently visible to nearby users' : 'You are currently hidden from nearby users'}
+              </p>
+              <p className="text-xs text-neutral-400 mt-1">
+                {isOpen ? 'Click "Go Inactive" to hide yourself' : 'Click "Go Active" to become visible'}
               </p>
             </div>
             
@@ -334,7 +337,7 @@ export default function Home() {
                 ${isOpen ? 'scale-105' : 'scale-100'}
               `}
             >
-              {presenceLoading ? 'Updating...' : (isOpen ? 'I&apos;m Open' : 'I&apos;m Closed')}
+              {presenceLoading ? 'Updating...' : (isOpen ? 'Go Inactive' : 'Go Active')}
               
               {/* Pulsating dot when open */}
               {isOpen && (
