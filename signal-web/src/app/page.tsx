@@ -62,8 +62,11 @@ export default function Home() {
     if (!user || !myCoords) return
 
     try {
+      console.log('🔍 fetchNearbyUsers called with:', { userId: user.id, myCoords })
+      
       // Get all open users within last 2 minutes
       const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000).toISOString()
+      console.log('⏰ Looking for users active since:', twoMinutesAgo)
       
       const { data: presenceData, error } = await supabase
         .from('presence')
@@ -81,10 +84,14 @@ export default function Home() {
         .not('lat', 'is', null)
         .not('lng', 'is', null)
 
+      console.log('📊 Raw Supabase response:', { data: presenceData, error })
+
       if (error) {
-        console.error('Error fetching nearby users:', error)
+        console.error('❌ Error fetching nearby users:', error)
         return
       }
+
+      console.log('👥 Found presence records:', presenceData?.length || 0)
 
       // Calculate distances and format data
       const nearby = presenceData
@@ -93,6 +100,14 @@ export default function Home() {
           const dist = getDistance(myCoords, coords)
           const updatedAt = new Date(presence.updated_at)
           const isActive = Date.now() - updatedAt.getTime() < 2 * 60 * 1000 // Within 2 minutes
+          
+          console.log('📍 Processing user:', {
+            userId: presence.user_id,
+            coords,
+            distance: dist,
+            isActive,
+            updatedAt: presence.updated_at
+          })
           
           // Handle the profiles join data structure
           const profileData = Array.isArray(presence.profiles) ? presence.profiles[0] : presence.profiles
@@ -108,9 +123,10 @@ export default function Home() {
         })
         .sort((a, b) => a.distance - b.distance)
 
+      console.log('✅ Final nearby users list:', nearby)
       setNearbyUsers(nearby)
     } catch (error) {
-      console.error('Error processing nearby users:', error)
+      console.error('💥 Error processing nearby users:', error)
     }
   }, [user, myCoords])
 
@@ -128,8 +144,11 @@ export default function Home() {
   useEffect(() => {
     if (!user || !hasProfile) return
 
+    console.log('🔌 Setting up real-time subscription for user:', user.id)
+
     // Clean up any existing subscription
     if (subscriptionRef.current) {
+      console.log('🧹 Cleaning up existing subscription')
       supabase.removeChannel(subscriptionRef.current)
     }
 
@@ -142,7 +161,8 @@ export default function Home() {
           schema: 'public',
           table: 'presence'
         },
-        () => {
+        (payload) => {
+          console.log('📡 Real-time presence change detected:', payload)
           // Use debounced function to prevent excessive calls
           debouncedFetchNearbyUsers()
         }
@@ -151,7 +171,10 @@ export default function Home() {
 
     subscriptionRef.current = channel
 
+    console.log('✅ Real-time subscription established')
+
     return () => {
+      console.log('🔌 Cleaning up real-time subscription')
       if (subscriptionRef.current) {
         supabase.removeChannel(subscriptionRef.current)
         subscriptionRef.current = null
