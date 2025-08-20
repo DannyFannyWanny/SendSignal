@@ -11,7 +11,6 @@ interface Profile {
 
 export default function Header() {
   const [user, setUser] = useState<User | null>(null)
-  const [profile, setProfile] = useState<Profile | null>(null)
   const router = useRouter()
 
   useEffect(() => {
@@ -32,7 +31,6 @@ export default function Header() {
           await fetchProfile(session.user.id)
         } else if (event === 'SIGNED_OUT') {
           setUser(null)
-          setProfile(null)
         }
       }
     )
@@ -41,13 +39,7 @@ export default function Header() {
   }, [])
 
   const fetchProfile = async (userId: string) => {
-    const { data } = await supabase
-      .from('profiles')
-      .select('first_name')
-      .eq('id', userId)
-      .single()
-    
-    setProfile(data)
+    // Profile fetching logic removed since we no longer display user name
   }
 
   const handleSignOut = async () => {

@@ -120,7 +120,7 @@ export default function AuthPage() {
         }
         setMessage('Successfully signed in!')
       }
-    } catch (err) {
+    } catch {
       setMessage('An error occurred. Please try again.')
     } finally {
       setLoading(false)
@@ -292,7 +292,7 @@ export default function AuthPage() {
               }}>
                 <div className="text-center">
                   <p className="text-sm text-neutral-600 mb-3">
-                    Don't have an account?
+                    Don&apos;t have an account?
                   </p>
                   <button
                     onClick={() => setIsSignUp(!isSignUp)}
