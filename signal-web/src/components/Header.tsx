@@ -56,12 +56,26 @@ export default function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-neutral-200/50">
+    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-neutral-200/50" style={{
+      backgroundColor: 'rgba(255, 255, 255, 0.8)',
+      backdropFilter: 'blur(12px)',
+      borderBottom: '1px solid rgba(229, 229, 229, 0.5)',
+      position: 'sticky',
+      top: 0,
+      zIndex: 50
+    }}>
       <div className="container max-w-4xl mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Brand */}
           <div className="flex items-center space-x-3">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent" style={{
+              background: 'linear-gradient(to right, #171717, #525252)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              fontSize: '1.5rem',
+              fontWeight: 'bold'
+            }}>
               Signal
             </h1>
           </div>
@@ -76,6 +90,10 @@ export default function Header() {
                 <button
                   onClick={handleSignOut}
                   className="px-3 py-1.5 text-sm text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors duration-200"
+                  style={{
+                    borderRadius: '0.5rem',
+                    transition: 'all 0.2s'
+                  }}
                 >
                   Sign out
                 </button>
@@ -84,6 +102,10 @@ export default function Header() {
               <button
                 onClick={() => router.push('/auth')}
                 className="px-4 py-2 text-sm text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors duration-200"
+                style={{
+                  borderRadius: '0.5rem',
+                  transition: 'all 0.2s'
+                }}
               >
                 Sign in
               </button>

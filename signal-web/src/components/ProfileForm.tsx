@@ -41,14 +41,32 @@ export default function ProfileForm({ userId, onComplete }: ProfileFormProps) {
   }
 
   return (
-    <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-neutral-200/50 max-w-md w-full">
-      <h2 className="text-2xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-6 text-center">
+    <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-neutral-200/50" style={{
+      backgroundColor: 'rgba(255, 255, 255, 0.8)',
+      backdropFilter: 'blur(8px)',
+      borderRadius: '1.5rem',
+      boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+      padding: '2rem',
+      border: '1px solid rgba(229, 229, 229, 0.5)',
+      maxWidth: '28rem',
+      width: '100%'
+    }}>
+      <h2 className="text-2xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-6 text-center" style={{
+        background: 'linear-gradient(to right, #171717, #525252)',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+        backgroundClip: 'text',
+        fontSize: '1.5rem',
+        fontWeight: 'bold',
+        marginBottom: '1.5rem',
+        textAlign: 'center'
+      }}>
         Complete Your Profile
       </h2>
       <p className="text-neutral-600 text-center mb-6">
         Please provide your first name to continue
       </p>
-      
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="firstName" className="block text-sm font-medium text-neutral-700 mb-2">
@@ -63,18 +81,28 @@ export default function ProfileForm({ userId, onComplete }: ProfileFormProps) {
             className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-neutral-500 focus:border-transparent transition-all duration-200"
             placeholder="Enter your first name"
             disabled={loading}
+            style={{
+              borderRadius: '0.75rem',
+              border: '1px solid #d4d4d4',
+              transition: 'all 0.2s'
+            }}
           />
         </div>
-        
+
         <button
           type="submit"
           disabled={loading || !firstName.trim()}
           className="w-full bg-neutral-900 hover:bg-neutral-800 disabled:bg-neutral-400 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+          style={{
+            borderRadius: '0.75rem',
+            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+            transition: 'all 0.2s'
+          }}
         >
           {loading ? 'Saving...' : 'Save Profile'}
         </button>
       </form>
-      
+
       {message && (
         <p className="mt-4 text-sm text-center text-neutral-600">
           {message}

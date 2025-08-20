@@ -185,12 +185,32 @@ export default function AuthPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 flex items-center justify-center p-4">
+    <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 flex items-center justify-center p-4" style={{
+      background: 'linear-gradient(to bottom right, #fafafa, #ffffff, #f5f5f5)',
+      minHeight: '100vh',
+      padding: '1rem'
+    }}>
       <div className="container max-w-md">
         {!user ? (
           // Sign in/up card
-          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-neutral-200/50">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-6 text-center">
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-neutral-200/50" style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            backdropFilter: 'blur(8px)',
+            borderRadius: '1.5rem',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            padding: '2rem',
+            border: '1px solid rgba(229, 229, 229, 0.5)'
+          }}>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-6 text-center" style={{
+              background: 'linear-gradient(to right, #171717, #525252)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              fontSize: '1.875rem',
+              fontWeight: 'bold',
+              marginBottom: '1.5rem',
+              textAlign: 'center'
+            }}>
               {isSignUp ? 'Sign Up' : 'Sign In'}
             </h1>
             
@@ -207,6 +227,11 @@ export default function AuthPage() {
                   required
                   className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-neutral-500 focus:border-transparent transition-all duration-200"
                   placeholder="Enter your email"
+                  style={{
+                    borderRadius: '0.75rem',
+                    border: '1px solid #d4d4d4',
+                    transition: 'all 0.2s'
+                  }}
                 />
               </div>
               
@@ -222,6 +247,11 @@ export default function AuthPage() {
                   required
                   className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-neutral-500 focus:border-transparent transition-all duration-200"
                   placeholder="Enter your password"
+                  style={{
+                    borderRadius: '0.75rem',
+                    border: '1px solid #d4d4d4',
+                    transition: 'all 0.2s'
+                  }}
                 />
               </div>
               
@@ -229,6 +259,11 @@ export default function AuthPage() {
                 type="submit"
                 disabled={loading}
                 className="w-full bg-neutral-900 hover:bg-neutral-800 disabled:bg-neutral-400 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
+                style={{
+                  borderRadius: '0.75rem',
+                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                  transition: 'all 0.2s'
+                }}
               >
                 {loading ? 'Processing...' : (isSignUp ? 'Sign Up' : 'Sign In')}
               </button>
@@ -238,6 +273,9 @@ export default function AuthPage() {
               <button
                 onClick={() => setIsSignUp(!isSignUp)}
                 className="text-sm text-neutral-600 hover:text-neutral-900 underline"
+                style={{
+                  transition: 'color 0.2s'
+                }}
               >
                 {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
               </button>
@@ -251,8 +289,24 @@ export default function AuthPage() {
           </div>
         ) : (
           // Profile setup form
-          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-neutral-200/50">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-6 text-center">
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-neutral-200/50" style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            backdropFilter: 'blur(8px)',
+            borderRadius: '1.5rem',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            padding: '2rem',
+            border: '1px solid rgba(229, 229, 229, 0.5)'
+          }}>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-6 text-center" style={{
+              background: 'linear-gradient(to right, #171717, #525252)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              fontSize: '1.875rem',
+              fontWeight: 'bold',
+              marginBottom: '1.5rem',
+              textAlign: 'center'
+            }}>
               Complete Your Profile
             </h1>
             <form onSubmit={handleProfileSubmit} className="space-y-4">
@@ -268,12 +322,22 @@ export default function AuthPage() {
                   required
                   className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-neutral-500 focus:border-transparent transition-all duration-200"
                   placeholder="Enter your first name"
+                  style={{
+                    borderRadius: '0.75rem',
+                    border: '1px solid #d4d4d4',
+                    transition: 'all 0.2s'
+                  }}
                 />
               </div>
               <button
                 type="submit"
                 disabled={profileLoading}
                 className="w-full bg-neutral-900 hover:bg-neutral-800 disabled:bg-neutral-400 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
+                style={{
+                  borderRadius: '0.75rem',
+                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                  transition: 'all 0.2s'
+                }}
               >
                 {profileLoading ? 'Saving...' : 'Save Profile'}
               </button>
