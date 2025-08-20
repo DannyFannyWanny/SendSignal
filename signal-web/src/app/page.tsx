@@ -28,6 +28,8 @@ export default function Home() {
   const [profileCompleted, setProfileCompleted] = useState(false)
   const router = useRouter()
   const heartbeatRef = useRef<{ stop: () => void } | null>(null)
+  const subscriptionRef = useRef<any>(null)
+  const fetchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // Fetch initial presence when user and profile are available
   useEffect(() => {
@@ -36,6 +38,25 @@ export default function Home() {
       setProfileCompleted(true)
     }
   }, [user, hasProfile, profileCompleted])
+
+  // Cleanup function to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      // Clean up all refs when component unmounts
+      if (heartbeatRef.current) {
+        heartbeatRef.current.stop()
+        heartbeatRef.current = null
+      }
+      if (subscriptionRef.current) {
+        supabase.removeChannel(subscriptionRef.current)
+        subscriptionRef.current = null
+      }
+      if (fetchTimeoutRef.current) {
+        clearTimeout(fetchTimeoutRef.current)
+        fetchTimeoutRef.current = null
+      }
+    }
+  }, [])
 
   const fetchNearbyUsers = useCallback(async () => {
     if (!user || !myCoords) return
@@ -93,9 +114,24 @@ export default function Home() {
     }
   }, [user, myCoords])
 
+  // Debounced function to prevent excessive API calls
+  const debouncedFetchNearbyUsers = useCallback(() => {
+    if (fetchTimeoutRef.current) {
+      clearTimeout(fetchTimeoutRef.current)
+    }
+    fetchTimeoutRef.current = setTimeout(() => {
+      fetchNearbyUsers()
+    }, 1000) // Wait 1 second before fetching
+  }, [fetchNearbyUsers])
+
   // Set up realtime subscription for presence changes
   useEffect(() => {
     if (!user || !hasProfile) return
+
+    // Clean up any existing subscription
+    if (subscriptionRef.current) {
+      supabase.removeChannel(subscriptionRef.current)
+    }
 
     const channel = supabase
       .channel('presence-changes')
@@ -107,16 +143,25 @@ export default function Home() {
           table: 'presence'
         },
         () => {
-          // Re-fetch nearby users when presence changes
-          fetchNearbyUsers()
+          // Use debounced function to prevent excessive calls
+          debouncedFetchNearbyUsers()
         }
       )
       .subscribe()
 
+    subscriptionRef.current = channel
+
     return () => {
-      supabase.removeChannel(channel)
+      if (subscriptionRef.current) {
+        supabase.removeChannel(subscriptionRef.current)
+        subscriptionRef.current = null
+      }
+      if (fetchTimeoutRef.current) {
+        clearTimeout(fetchTimeoutRef.current)
+        fetchTimeoutRef.current = null
+      }
     }
-  }, [user, hasProfile, fetchNearbyUsers])
+  }, [user, hasProfile, debouncedFetchNearbyUsers])
 
   const fetchInitialPresence = async (userId: string) => {
     const { data } = await supabase
@@ -137,8 +182,16 @@ export default function Home() {
     if (!user) return
 
     setPresenceLoading(true)
+    
+    // Add a safety timeout to prevent infinite loading
+    const safetyTimeout = setTimeout(() => {
+      setPresenceLoading(false)
+      console.error('Toggle operation timed out')
+    }, 10000) // 10 second timeout
+
     try {
       await updatePresence(newState, myCoords)
+      clearTimeout(safetyTimeout)
       setIsOpen(newState)
 
       if (newState) {
@@ -155,6 +208,7 @@ export default function Home() {
         }
       }
     } catch (error) {
+      clearTimeout(safetyTimeout)
       console.error('Failed to update presence:', error)
       // Revert the toggle if it failed
       setIsOpen(!newState)
