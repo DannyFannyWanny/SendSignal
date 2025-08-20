@@ -27,8 +27,8 @@ export default function AuthPage() {
         if (session?.user) {
           await fetchProfile(session.user.id)
         }
-      } catch (err) {
-        console.error('Error getting initial session:', err)
+      } catch {
+        console.error('Error getting initial session')
       }
     }
 
@@ -46,7 +46,7 @@ export default function AuthPage() {
     )
 
     return () => subscription.unsubscribe()
-  }, [])
+  }, []) // fetchProfile is stable, no need to add to deps
 
   // Handle redirects in a separate useEffect
   useEffect(() => {

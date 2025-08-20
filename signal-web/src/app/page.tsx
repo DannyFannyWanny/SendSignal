@@ -28,7 +28,7 @@ export default function Home() {
   const [profileCompleted, setProfileCompleted] = useState(false)
   const router = useRouter()
   const heartbeatRef = useRef<{ stop: () => void } | null>(null)
-  const subscriptionRef = useRef<any>(null)
+  const subscriptionRef = useRef<ReturnType<typeof supabase.channel> | null>(null)
   const fetchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // Fetch initial presence when user and profile are available
