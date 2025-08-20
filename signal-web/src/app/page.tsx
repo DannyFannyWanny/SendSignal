@@ -347,50 +347,50 @@ export default function Home() {
       minHeight: '100vh',
       padding: '1rem'
     }}>
-      <div className="container max-w-4xl mx-auto pt-8 space-y-6">
+      <div className="container max-w-4xl mx-auto pt-6 space-y-4">
         {/* Welcome Header */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-neutral-200/50" style={{
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 border border-neutral-200/50" style={{
           backgroundColor: 'rgba(255, 255, 255, 0.8)',
           backdropFilter: 'blur(8px)',
           borderRadius: '1.5rem',
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-          padding: '2rem',
+          padding: '1.5rem',
           border: '1px solid rgba(229, 229, 229, 0.5)'
         }}>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-4" style={{
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-3" style={{
             background: 'linear-gradient(to right, #171717, #525252)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
-            fontSize: '1.875rem',
+            fontSize: '1.5rem',
             fontWeight: 'bold',
-            marginBottom: '1rem'
+            marginBottom: '0.75rem'
           }}>
             Welcome back, {profile!.first_name}! 👋
           </h1>
-          <p className="text-neutral-600">
+          <p className="text-neutral-600 text-sm">
             You&apos;re now signed in and ready to connect with people nearby.
           </p>
         </div>
 
         {/* Presence Control Card */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-neutral-200/50" style={{
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 border border-neutral-200/50" style={{
           backgroundColor: 'rgba(255, 255, 255, 0.8)',
           backdropFilter: 'blur(8px)',
           borderRadius: '1.5rem',
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-          padding: '2rem',
+          padding: '1.5rem',
           border: '1px solid rgba(229, 229, 229, 0.5)'
         }}>
-          <h2 className="text-2xl font-bold text-neutral-900 mb-2">Go visible</h2>
-          <p className="text-neutral-600 mb-8">
+          <h2 className="text-xl font-bold text-neutral-900 mb-2">Go visible</h2>
+          <p className="text-neutral-600 mb-6 text-sm">
             Flip it on when you&apos;re open to meet. Flip it off when you&apos;re done.
           </p>
           
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-6">
             <div>
-              <p className="text-neutral-700 mb-2 font-medium">Status</p>
-              <p className="text-sm text-neutral-500">
+              <p className="text-neutral-700 mb-1 font-medium text-sm">Status</p>
+              <p className="text-xs text-neutral-500">
                 {isOpen ? 'You are currently visible to nearby users' : 'You are currently hidden from nearby users'}
               </p>
               <p className="text-xs text-neutral-400 mt-1">
@@ -402,7 +402,7 @@ export default function Home() {
               onClick={() => handleToggleOpen(!isOpen)}
               disabled={presenceLoading}
               className={`
-                relative px-8 py-4 rounded-2xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl
+                relative px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-md hover:shadow-lg
                 ${isOpen 
                   ? 'bg-green-600 hover:bg-green-700 text-white shadow-green-200' 
                   : 'bg-neutral-200 hover:bg-neutral-300 text-neutral-800 shadow-neutral-200'
@@ -410,20 +410,24 @@ export default function Home() {
                 ${presenceLoading ? 'opacity-50 cursor-not-allowed' : ''}
                 ${isOpen ? 'scale-105' : 'scale-100'}
               `}
+              style={{
+                borderRadius: '0.75rem',
+                transition: 'all 0.3s'
+              }}
             >
               {presenceLoading ? 'Updating...' : (isOpen ? 'Go Inactive' : 'Go Active')}
               
               {/* Pulsating dot when open */}
               {isOpen && (
-                <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse motion-reduce:animate-none"></span>
+                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse motion-reduce:animate-none"></span>
               )}
             </button>
           </div>
 
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-neutral-700 mb-2 font-medium">Location</p>
-              <p className="text-sm text-neutral-500">
+              <p className="text-neutral-700 mb-1 font-medium text-sm">Location</p>
+              <p className="text-xs text-neutral-500">
                 {myCoords 
                   ? `Lat: ${myCoords.lat.toFixed(4)}, Lng: ${myCoords.lng.toFixed(4)}`
                   : 'Location not available'
@@ -434,7 +438,11 @@ export default function Home() {
             <button
               onClick={handleRefreshLocation}
               disabled={locationLoading}
-              className="px-4 py-2 bg-neutral-900 hover:bg-neutral-800 text-white rounded-xl text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50"
+              className="px-3 py-2 bg-neutral-900 hover:bg-neutral-800 text-white rounded-lg text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
+              style={{
+                borderRadius: '0.5rem',
+                transition: 'all 0.2s'
+              }}
             >
               {locationLoading ? 'Refreshing...' : 'Refresh Location'}
             </button>
@@ -442,54 +450,57 @@ export default function Home() {
         </div>
 
         {/* Nearby Users Card */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-neutral-200/50" style={{
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 border border-neutral-200/50" style={{
           backgroundColor: 'rgba(255, 255, 255, 0.8)',
           backdropFilter: 'blur(8px)',
           borderRadius: '1.5rem',
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-          padding: '2rem',
+          padding: '1.5rem',
           border: '1px solid rgba(229, 229, 229, 0.5)'
         }}>
-          <h2 className="text-2xl font-bold text-neutral-900 mb-6">Nearby Now</h2>
+          <h2 className="text-xl font-bold text-neutral-900 mb-4">Nearby Now</h2>
           
           {nearbyUsers.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-neutral-500">No nearby users found</p>
-              <p className="text-sm text-neutral-400 mt-2">
+            <div className="text-center py-6">
+              <p className="text-neutral-500 text-sm">No nearby users found</p>
+              <p className="text-xs text-neutral-400 mt-1">
                 Make sure you&apos;re open to receiving signals and have location enabled
               </p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {nearbyUsers.map((nearbyUser) => (
-                <div key={nearbyUser.id} className="flex items-center justify-between p-4 bg-white/60 backdrop-blur-sm rounded-2xl border border-neutral-200/30 hover:bg-white/80 transition-all duration-200" style={{
+                <div key={nearbyUser.id} className="flex items-center justify-between p-3 bg-white/60 backdrop-blur-sm rounded-xl border border-neutral-200/30 hover:bg-white/80 transition-all duration-200" style={{
                   backgroundColor: 'rgba(255, 255, 255, 0.6)',
                   backdropFilter: 'blur(8px)',
-                  borderRadius: '1rem',
+                  borderRadius: '0.75rem',
                   border: '1px solid rgba(229, 229, 229, 0.3)',
-                  padding: '1rem',
+                  padding: '0.75rem',
                   transition: 'all 0.2s'
                 }}>
                   <div className="flex items-center space-x-3">
                     {/* Activity indicator dot */}
-                    <div className={`w-2.5 h-2.5 rounded-full ${nearbyUser.isActive ? 'bg-green-500' : 'bg-neutral-400'}`} style={{
-                      width: '0.625rem',
-                      height: '0.625rem',
+                    <div className={`w-2 h-2 rounded-full ${nearbyUser.isActive ? 'bg-green-500' : 'bg-neutral-400'}`} style={{
+                      width: '0.5rem',
+                      height: '0.5rem',
                       borderRadius: '50%',
                       backgroundColor: nearbyUser.isActive ? '#10b981' : '#9ca3af'
                     }}></div>
                     
                     <div>
-                      <p className="font-medium text-neutral-900">
+                      <p className="font-medium text-neutral-900 text-sm">
                         {nearbyUser.first_name || 'Someone'}
                       </p>
-                      <p className="text-sm text-neutral-500">
+                      <p className="text-xs text-neutral-500">
                         {formatDistance(nearbyUser.distance)} away • {nearbyUser.freshness}
                       </p>
                     </div>
                   </div>
                   
-                  <button className="px-4 py-2 bg-neutral-900 hover:bg-neutral-800 text-white rounded-xl text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg">
+                  <button className="px-3 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-white rounded-lg text-xs font-medium transition-all duration-200 shadow-sm hover:shadow-md" style={{
+                    borderRadius: '0.5rem',
+                    transition: 'all 0.2s'
+                  }}>
                     Send Signal
                   </button>
                 </div>

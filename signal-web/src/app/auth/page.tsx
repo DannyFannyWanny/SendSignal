@@ -190,33 +190,35 @@ export default function AuthPage() {
       minHeight: '100vh',
       padding: '1rem'
     }}>
-      <div className="container max-w-md">
+      <div className="container max-w-sm">
         {!user ? (
           // Sign in/up card
-          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-neutral-200/50" style={{
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 border border-neutral-200/50" style={{
             backgroundColor: 'rgba(255, 255, 255, 0.8)',
             backdropFilter: 'blur(8px)',
             borderRadius: '1.5rem',
             boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-            padding: '2rem',
-            border: '1px solid rgba(229, 229, 229, 0.5)'
+            padding: '1.5rem',
+            border: '1px solid rgba(229, 229, 229, 0.5)',
+            maxWidth: '24rem',
+            width: '100%'
           }}>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-6 text-center" style={{
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-4 text-center" style={{
               background: 'linear-gradient(to right, #171717, #525252)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
-              fontSize: '1.875rem',
+              fontSize: '1.5rem',
               fontWeight: 'bold',
-              marginBottom: '1.5rem',
+              marginBottom: '1rem',
               textAlign: 'center'
             }}>
               {isSignUp ? 'Sign Up' : 'Sign In'}
             </h1>
             
-            <form onSubmit={handleAuth} className="space-y-4">
+            <form onSubmit={handleAuth} className="space-y-3">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-neutral-700 mb-2">
+                <label htmlFor="email" className="block text-sm font-medium text-neutral-700 mb-1">
                   Email
                 </label>
                 <input
@@ -225,10 +227,10 @@ export default function AuthPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-neutral-500 focus:border-transparent transition-all duration-200"
+                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-500 focus:border-transparent transition-all duration-200"
                   placeholder="Enter your email"
                   style={{
-                    borderRadius: '0.75rem',
+                    borderRadius: '0.5rem',
                     border: '1px solid #d4d4d4',
                     transition: 'all 0.2s'
                   }}
@@ -236,7 +238,7 @@ export default function AuthPage() {
               </div>
               
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-neutral-700 mb-2">
+                <label htmlFor="password" className="block text-sm font-medium text-neutral-700 mb-1">
                   Password
                 </label>
                 <input
@@ -245,10 +247,10 @@ export default function AuthPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-neutral-500 focus:border-transparent transition-all duration-200"
+                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-500 focus:border-transparent transition-all duration-200"
                   placeholder="Enter your password"
                   style={{
-                    borderRadius: '0.75rem',
+                    borderRadius: '0.5rem',
                     border: '1px solid #d4d4d4',
                     transition: 'all 0.2s'
                   }}
@@ -258,10 +260,10 @@ export default function AuthPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-neutral-900 hover:bg-neutral-800 disabled:bg-neutral-400 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
+                className="w-full bg-neutral-900 hover:bg-neutral-800 disabled:bg-neutral-400 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
                 style={{
-                  borderRadius: '0.75rem',
-                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                  borderRadius: '0.5rem',
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                   transition: 'all 0.2s'
                 }}
               >
@@ -269,7 +271,7 @@ export default function AuthPage() {
               </button>
             </form>
             
-            <div className="mt-6 text-center">
+            <div className="mt-4 text-center">
               <button
                 onClick={() => setIsSignUp(!isSignUp)}
                 className="text-sm text-neutral-600 hover:text-neutral-900 underline"
@@ -282,36 +284,38 @@ export default function AuthPage() {
             </div>
             
             {message && (
-              <p className="mt-4 text-sm text-center text-neutral-600">
+              <p className="mt-3 text-sm text-center text-neutral-600">
                 {message}
               </p>
             )}
           </div>
         ) : (
           // Profile setup form
-          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-neutral-200/50" style={{
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 border border-neutral-200/50" style={{
             backgroundColor: 'rgba(255, 255, 255, 0.8)',
             backdropFilter: 'blur(8px)',
             borderRadius: '1.5rem',
             boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-            padding: '2rem',
-            border: '1px solid rgba(229, 229, 229, 0.5)'
+            padding: '1.5rem',
+            border: '1px solid rgba(229, 229, 229, 0.5)',
+            maxWidth: '24rem',
+            width: '100%'
           }}>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-6 text-center" style={{
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-4 text-center" style={{
               background: 'linear-gradient(to right, #171717, #525252)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
-              fontSize: '1.875rem',
+              fontSize: '1.5rem',
               fontWeight: 'bold',
-              marginBottom: '1.5rem',
+              marginBottom: '1rem',
               textAlign: 'center'
             }}>
               Complete Your Profile
             </h1>
-            <form onSubmit={handleProfileSubmit} className="space-y-4">
+            <form onSubmit={handleProfileSubmit} className="space-y-3">
               <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-neutral-700 mb-2">
+                <label htmlFor="firstName" className="block text-sm font-medium text-neutral-700 mb-1">
                   First Name
                 </label>
                 <input
@@ -320,10 +324,10 @@ export default function AuthPage() {
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   required
-                  className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-neutral-500 focus:border-transparent transition-all duration-200"
+                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-500 focus:border-transparent transition-all duration-200"
                   placeholder="Enter your first name"
                   style={{
-                    borderRadius: '0.75rem',
+                    borderRadius: '0.5rem',
                     border: '1px solid #d4d4d4',
                     transition: 'all 0.2s'
                   }}
@@ -332,10 +336,10 @@ export default function AuthPage() {
               <button
                 type="submit"
                 disabled={profileLoading}
-                className="w-full bg-neutral-900 hover:bg-neutral-800 disabled:bg-neutral-400 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
+                className="w-full bg-neutral-900 hover:bg-neutral-800 disabled:bg-neutral-400 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
                 style={{
-                  borderRadius: '0.75rem',
-                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                  borderRadius: '0.5rem',
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                   transition: 'all 0.2s'
                 }}
               >
@@ -343,7 +347,7 @@ export default function AuthPage() {
               </button>
             </form>
             {message && (
-              <p className="mt-4 text-sm text-center text-neutral-600">
+              <p className="mt-3 text-sm text-center text-neutral-600">
                 {message}
               </p>
             )}

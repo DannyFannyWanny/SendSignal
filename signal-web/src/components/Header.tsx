@@ -64,16 +64,16 @@ export default function Header() {
       top: 0,
       zIndex: 50
     }}>
-      <div className="container max-w-4xl mx-auto px-4 py-4">
+      <div className="container max-w-4xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Brand */}
-          <div className="flex items-center space-x-3">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent" style={{
+          <div className="flex items-center space-x-2">
+            <h1 className="text-xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent" style={{
               background: 'linear-gradient(to right, #171717, #525252)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
-              fontSize: '1.5rem',
+              fontSize: '1.25rem',
               fontWeight: 'bold'
             }}>
               Signal
@@ -81,17 +81,17 @@ export default function Header() {
           </div>
 
           {/* Auth Status */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3">
             {user ? (
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2">
                 <span className="text-sm text-neutral-600">
                   {profile?.first_name || 'User'}
                 </span>
                 <button
                   onClick={handleSignOut}
-                  className="px-3 py-1.5 text-sm text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors duration-200"
+                  className="px-2.5 py-1 text-sm text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-md transition-colors duration-200"
                   style={{
-                    borderRadius: '0.5rem',
+                    borderRadius: '0.375rem',
                     transition: 'all 0.2s'
                   }}
                 >
@@ -101,9 +101,9 @@ export default function Header() {
             ) : (
               <button
                 onClick={() => router.push('/auth')}
-                className="px-4 py-2 text-sm text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors duration-200"
+                className="px-3 py-1.5 text-sm text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-md transition-colors duration-200"
                 style={{
-                  borderRadius: '0.5rem',
+                  borderRadius: '0.375rem',
                   transition: 'all 0.2s'
                 }}
               >
