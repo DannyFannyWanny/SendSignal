@@ -15,22 +15,43 @@ export default function SignalNotifications({ userId }: SignalNotificationsProps
   // Fetch incoming signals
   const fetchIncomingSignals = async () => {
     try {
-      const { data, error } = await supabase
+      // First get the signals
+      const { data: signalsData, error: signalsError } = await supabase
         .from('signals')
-        .select(`
-          *,
-          sender:profiles!signals_sender_id_fkey(first_name)
-        `)
+        .select('*')
         .eq('recipient_id', userId)
         .eq('status', 'pending')
         .order('created_at', { ascending: false })
 
-      if (error) {
-        console.error('Error fetching incoming signals:', error)
+      if (signalsError) {
+        console.error('Error fetching signals:', signalsError)
         return
       }
 
-      setIncomingSignals(data || [])
+      // Then get the sender profiles separately
+      if (signalsData && signalsData.length > 0) {
+        const senderIds = signalsData.map(signal => signal.sender_id)
+        const { data: profilesData, error: profilesError } = await supabase
+          .from('profiles')
+          .select('id, first_name')
+          .in('id', senderIds)
+
+        if (profilesError) {
+          console.error('Error fetching profiles:', profilesError)
+          return
+        }
+
+        // Combine the data
+        const profilesMap = new Map(profilesData?.map(p => [p.id, p]) || [])
+        const signalsWithProfiles = signalsData.map(signal => ({
+          ...signal,
+          sender: profilesMap.get(signal.sender_id)
+        }))
+
+        setIncomingSignals(signalsWithProfiles)
+      } else {
+        setIncomingSignals([])
+      }
     } catch (error) {
       console.error('Error in fetchIncomingSignals:', error)
     }
@@ -116,9 +137,10 @@ export default function SignalNotifications({ userId }: SignalNotificationsProps
     }
   }, [userId])
 
-  if (incomingSignals.length === 0) {
-    return null // Don't show anything if no signals
-  }
+  // Always show the component for debugging
+  // if (incomingSignals.length === 0) {
+  //   return null // Don't show anything if no signals
+  // }
 
   return (
     <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 border border-neutral-200/50 mb-4" style={{
@@ -130,9 +152,16 @@ export default function SignalNotifications({ userId }: SignalNotificationsProps
       border: '1px solid rgba(229, 229, 229, 0.5)'
     }}>
       <h2 className="text-xl font-bold text-neutral-900 mb-4">📨 Incoming Signals</h2>
+      <p className="text-sm text-neutral-600 mb-3">Debug: {incomingSignals.length} signals, User ID: {userId}</p>
       
       <div className="space-y-3">
-        {incomingSignals.map((signal) => (
+        {incomingSignals.length === 0 ? (
+          <div className="text-center py-4">
+            <p className="text-neutral-500 text-sm">No incoming signals yet</p>
+            <p className="text-xs text-neutral-400 mt-1">When someone sends you a signal, it will appear here</p>
+          </div>
+        ) : (
+          incomingSignals.map((signal) => (
           <div key={signal.id} className="flex items-center justify-between p-4 bg-white/60 backdrop-blur-sm rounded-xl border border-neutral-200/30" style={{
             backgroundColor: 'rgba(255, 255, 255, 0.6)',
             backdropFilter: 'blur(8px)',
@@ -178,7 +207,8 @@ export default function SignalNotifications({ userId }: SignalNotificationsProps
               </button>
             </div>
           </div>
-        ))}
+        ))
+        )}
       </div>
     </div>
   )

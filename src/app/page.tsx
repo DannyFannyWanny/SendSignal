@@ -8,6 +8,7 @@ import { sendSignal } from '@/lib/signals'
 import { useSession } from '@/hooks/useSession'
 import ProfileForm from '@/components/ProfileForm'
 import SignalNotifications from '@/components/SignalNotifications'
+import SentSignals from '@/components/SentSignals'
 import { getDistance } from 'geolib'
 import { formatDistanceToNow } from 'date-fns'
 
@@ -431,6 +432,9 @@ export default function Home() {
 
         {/* Signal Notifications */}
         <SignalNotifications userId={user!.id} />
+
+        {/* Sent Signals */}
+        <SentSignals userId={user!.id} />
 
         {/* Nearby Users Card */}
         <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 border border-neutral-200/50" style={{
