@@ -5,9 +5,7 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { User } from '@supabase/supabase-js'
 
-interface Profile {
-  first_name: string | null
-}
+
 
 export default function Header() {
   const [user, setUser] = useState<User | null>(null)
@@ -28,7 +26,6 @@ export default function Header() {
       async (event, session) => {
         if (event === 'SIGNED_IN' && session?.user) {
           setUser(session.user)
-          await fetchProfile(session.user.id)
         } else if (event === 'SIGNED_OUT') {
           setUser(null)
         }
@@ -38,9 +35,7 @@ export default function Header() {
     return () => subscription.unsubscribe()
   }, [])
 
-  const fetchProfile = async (userId: string) => {
-    // Profile fetching logic removed since we no longer display user name
-  }
+
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+
 
 export async function middleware() {
   // For now, just allow all requests and handle auth in the components

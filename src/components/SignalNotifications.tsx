@@ -173,9 +173,9 @@ export default function SignalNotifications({ userId }: SignalNotificationsProps
               <p className="font-medium text-neutral-900 text-sm">
                 Signal from <span className="font-semibold">{signal.sender?.first_name || 'Someone'}</span>
               </p>
-              {signal.message && (
-                <p className="text-xs text-neutral-600 mt-1">"{signal.message}"</p>
-              )}
+                                     {signal.message && (
+                         <p className="text-xs text-neutral-600 mt-1">&ldquo;{signal.message}&rdquo;</p>
+                       )}
               <p className="text-xs text-neutral-500 mt-1">
                 Sent {new Date(signal.created_at).toLocaleTimeString()}
               </p>

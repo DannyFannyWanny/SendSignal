@@ -173,9 +173,9 @@ export default function SentSignals({ userId }: SentSignalsProps) {
                 </span>
               </div>
               
-              {signal.message && (
-                <p className="text-xs text-neutral-600 mb-1">"{signal.message}"</p>
-              )}
+                                   {signal.message && (
+                       <p className="text-xs text-neutral-600 mb-1">&ldquo;{signal.message}&rdquo;</p>
+                     )}
               
               <div className="flex items-center space-x-4 text-xs text-neutral-500">
                 <span>Status: <span className="font-medium">{getStatusText(signal.status)}</span></span>
