@@ -76,7 +76,7 @@ export function useSession() {
       console.log('📋 Fetching profile for user:', userId)
       
       // Add timeout to prevent hanging
-      const timeoutPromise = new Promise((_, reject) => {
+      const timeoutPromise = new Promise<never>((_, reject) => {
         setTimeout(() => reject(new Error('Profile fetch timeout after 10 seconds')), 10000)
       })
       
