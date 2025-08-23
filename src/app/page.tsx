@@ -7,6 +7,7 @@ import { updatePresence, startHeartbeat, getCoords } from '@/lib/presence'
 import { sendSignal } from '@/lib/signals'
 import { useSession } from '@/hooks/useSession'
 import ProfileForm from '@/components/ProfileForm'
+import SignalNotifications from '@/components/SignalNotifications'
 import { getDistance } from 'geolib'
 import { formatDistanceToNow } from 'date-fns'
 
@@ -285,8 +286,22 @@ export default function Home() {
 
   const handleSendSignal = async (recipientId: string) => {
     console.log('🎯 Send Signal clicked for user:', recipientId)
-    // TODO: Implement signal sending
-    alert('Signal functionality coming soon!')
+    
+    try {
+      const result = await sendSignal(recipientId)
+      
+      if (result.success) {
+        console.log('✅ Signal sent successfully!')
+        // TODO: Show success message to user
+        alert('Signal sent! Waiting for response...')
+      } else {
+        console.error('❌ Failed to send signal:', result.error)
+        alert(`Failed to send signal: ${result.error}`)
+      }
+    } catch (error) {
+      console.error('💥 Error in handleSendSignal:', error)
+      alert('An error occurred while sending the signal')
+    }
   }
 
   const formatDistance = (meters: number): string => {
@@ -402,8 +417,6 @@ export default function Home() {
         }}>
           <h1 className="text-2xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-3" style={{
             background: 'linear-gradient(to right, #171717, #525252)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
             fontSize: '1.5rem',
             fontWeight: 'bold',
@@ -415,6 +428,9 @@ export default function Home() {
             You&apos;re now signed in and ready to connect with people nearby.
           </p>
         </div>
+
+        {/* Signal Notifications */}
+        <SignalNotifications userId={user!.id} />
 
         {/* Nearby Users Card */}
         <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 border border-neutral-200/50" style={{

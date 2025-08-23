@@ -9,14 +9,18 @@ CREATE TABLE IF NOT EXISTS public.signals (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     expires_at TIMESTAMP WITH TIME ZONE DEFAULT (NOW() + INTERVAL '24 hours') -- Signals expire after 24 hours
     
-    -- Ensure users can't send multiple pending signals to the same person
-    CONSTRAINT unique_pending_signal UNIQUE (sender_id, recipient_id, status) WHERE status = 'pending'
+    -- Note: We'll use a unique index instead of constraint for pending signals
 );
 
 -- Index for efficient queries
 CREATE INDEX IF NOT EXISTS idx_signals_recipient_status ON public.signals(recipient_id, status);
 CREATE INDEX IF NOT EXISTS idx_signals_sender_status ON public.signals(sender_id, status);
 CREATE INDEX IF NOT EXISTS idx_signals_created_at ON public.signals(created_at);
+
+-- Unique index to prevent multiple pending signals between the same users
+CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_pending_signal 
+ON public.signals(sender_id, recipient_id) 
+WHERE status = 'pending';
 
 -- Enable Row Level Security
 ALTER TABLE public.signals ENABLE ROW LEVEL SECURITY;
