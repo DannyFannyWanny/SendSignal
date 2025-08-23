@@ -15,12 +15,13 @@ export default function SignalNotifications({ userId }: SignalNotificationsProps
   // Fetch incoming signals
   const fetchIncomingSignals = async () => {
     try {
-      // First get the signals
+      // First get the signals (exclude expired ones)
       const { data: signalsData, error: signalsError } = await supabase
         .from('signals')
         .select('*')
         .eq('recipient_id', userId)
         .eq('status', 'pending')
+        .gt('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()) // Only signals from last 24 hours
         .order('created_at', { ascending: false })
 
       if (signalsError) {

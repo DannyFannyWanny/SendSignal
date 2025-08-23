@@ -15,11 +15,12 @@ export default function SentSignals({ userId }: SentSignalsProps) {
   // Fetch sent signals
   const fetchSentSignals = async () => {
     try {
-      // Get all signals sent by this user
+      // Get all signals sent by this user (exclude expired ones from main view)
       const { data: signalsData, error: signalsError } = await supabase
         .from('signals')
         .select('*')
         .eq('sender_id', userId)
+        .neq('status', 'expired') // Don't show expired signals in main view
         .order('created_at', { ascending: false })
 
       if (signalsError) {

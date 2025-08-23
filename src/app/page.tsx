@@ -39,6 +39,8 @@ export default function Home() {
     if (user && hasProfile && !profileCompleted) {
       fetchInitialPresence(user.id)
       setProfileCompleted(true)
+      // Also expire old signals when user loads the page
+      expireOldSignals()
     }
   }, [user, hasProfile, profileCompleted])
 
@@ -315,6 +317,22 @@ export default function Home() {
   const handleProfileComplete = () => {
     // This will trigger the useEffect to fetch presence and show the main UI
     setProfileCompleted(true)
+  }
+
+  // Function to expire old signals
+  const expireOldSignals = async () => {
+    if (!user) return
+    
+    try {
+      const { data, error } = await supabase.rpc('expire_old_signals')
+      if (error) {
+        console.error('Error expiring old signals:', error)
+      } else if (data && data > 0) {
+        console.log(`✅ Expired ${data} old signals`)
+      }
+    } catch (error) {
+      console.error('Error in expireOldSignals:', error)
+    }
   }
 
   // Loading state
