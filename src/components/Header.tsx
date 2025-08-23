@@ -16,7 +16,6 @@ export default function Header() {
       const { data: { session } } = await supabase.auth.getSession()
       if (session?.user) {
         setUser(session.user)
-        await fetchProfile(session.user.id)
       }
     }
 
