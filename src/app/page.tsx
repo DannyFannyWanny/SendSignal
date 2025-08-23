@@ -335,13 +335,25 @@ export default function Home() {
     }
   }
 
+  // Debug logging to help diagnose Chrome refresh issues
+  console.log('🔍 Page render state:', { 
+    loading, 
+    user: user?.id, 
+    profile: profile?.first_name, 
+    isAuthenticated, 
+    hasProfile,
+    profileCompleted 
+  })
+
   // Loading state
   if (loading) {
+    console.log('⏳ Showing loading spinner...')
     return (
       <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 flex items-center justify-center p-4">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-neutral-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-neutral-600">Loading...</p>
+          <p className="text-xs text-neutral-400 mt-2">Checking authentication...</p>
         </div>
       </main>
     )
@@ -349,6 +361,7 @@ export default function Home() {
 
   // No session - show CTA
   if (!isAuthenticated) {
+    console.log('🚫 No authentication, showing CTA...')
     return (
       <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 flex items-center justify-center p-4 sm:p-6" style={{
         background: 'linear-gradient(to bottom right, #fafafa, #ffffff, #f5f5f5)',
@@ -403,6 +416,7 @@ export default function Home() {
 
   // Session exists but no profile - show profile form
   if (!hasProfile) {
+    console.log('👤 User authenticated but no profile, showing profile form...')
     return (
       <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 flex items-center justify-center p-4" style={{
         background: 'linear-gradient(to bottom right, #fafafa, #ffffff, #f5f5f5)',
@@ -418,6 +432,7 @@ export default function Home() {
   }
 
   // Session exists with profile - show presence UI
+  console.log('🎯 User authenticated with profile, showing main UI...')
   return (
     <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 p-4" style={{
       background: 'linear-gradient(to bottom right, #fafafa, #ffffff, #f5f5f5)',
