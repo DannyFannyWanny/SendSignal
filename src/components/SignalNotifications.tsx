@@ -152,8 +152,7 @@ export default function SignalNotifications({ userId }: SignalNotificationsProps
       padding: '1.5rem',
       border: '1px solid rgba(229, 229, 229, 0.5)'
     }}>
-      <h2 className="text-xl font-bold text-neutral-900 mb-4">📨 Incoming Signals</h2>
-      <p className="text-sm text-neutral-600 mb-3">Debug: {incomingSignals.length} signals, User ID: {userId}</p>
+                   <h2 className="text-xl font-bold text-neutral-900 mb-4">📨 Incoming Signals</h2>
       
       <div className="space-y-3">
         {incomingSignals.length === 0 ? (
