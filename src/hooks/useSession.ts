@@ -86,7 +86,8 @@ export function useSession() {
         .eq('id', userId)
         .single()
       
-      const { data, error } = await Promise.race([fetchPromise, timeoutPromise]) as any
+      const result = await Promise.race([fetchPromise, timeoutPromise])
+      const { data, error } = result
 
       if (error) {
         console.error('❌ Error fetching profile:', error)
