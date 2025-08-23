@@ -21,7 +21,7 @@ export default function SignalNotifications({ userId }: SignalNotificationsProps
         .select('*')
         .eq('recipient_id', userId)
         .eq('status', 'pending')
-        .gt('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()) // Only signals from last 24 hours
+        .gt('created_at', new Date(Date.now() - 5 * 60 * 1000).toISOString()) // Only signals from last 5 minutes
         .order('created_at', { ascending: false })
 
       if (signalsError) {

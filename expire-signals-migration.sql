@@ -7,11 +7,11 @@ RETURNS INTEGER AS $$
 DECLARE
     expired_count INTEGER;
 BEGIN
-    -- Update signals that are older than 24 hours and still pending
+    -- Update signals that are older than 5 minutes and still pending
     UPDATE public.signals 
     SET status = 'expired'
     WHERE status = 'pending' 
-    AND created_at < (NOW() - INTERVAL '24 hours');
+    AND created_at < (NOW() - INTERVAL '5 minutes');
     
     -- Get the count of expired signals
     GET DIAGNOSTICS expired_count = ROW_COUNT;
@@ -50,7 +50,7 @@ BEGIN
     WHERE (sender_id = auth.uid() AND recipient_id = p_recipient_id)
     OR (sender_id = p_recipient_id AND recipient_id = auth.uid())
     AND status = 'pending'
-    AND created_at < (NOW() - INTERVAL '24 hours');
+    AND created_at < (NOW() - INTERVAL '5 minutes');
     
     -- Check if there's already a pending signal
     IF EXISTS (
