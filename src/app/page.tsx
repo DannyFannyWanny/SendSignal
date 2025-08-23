@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { updatePresence, startHeartbeat, getCoords } from '@/lib/presence'
+import { sendSignal } from '@/lib/signals'
 import { useSession } from '@/hooks/useSession'
 import ProfileForm from '@/components/ProfileForm'
 import { getDistance } from 'geolib'
@@ -282,6 +283,12 @@ export default function Home() {
     }
   }
 
+  const handleSendSignal = async (recipientId: string) => {
+    console.log('🎯 Send Signal clicked for user:', recipientId)
+    // TODO: Implement signal sending
+    alert('Signal functionality coming soon!')
+  }
+
   const formatDistance = (meters: number): string => {
     if (meters < 1000) {
       return `${Math.round(meters)}m`
@@ -457,10 +464,14 @@ export default function Home() {
                     </div>
                   </div>
                   
-                  <button className="px-3 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-white rounded-lg text-xs font-medium transition-all duration-200 shadow-sm hover:shadow-md" style={{
-                    borderRadius: '0.5rem',
-                    transition: 'all 0.2s'
-                  }}>
+                  <button 
+                    onClick={() => handleSendSignal(nearbyUser.id)}
+                    className="px-3 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-white rounded-lg text-xs font-medium transition-all duration-200 shadow-sm hover:shadow-md" 
+                    style={{
+                      borderRadius: '0.5rem',
+                      transition: 'all 0.2s'
+                    }}
+                  >
                     Send Signal
                   </button>
                 </div>
