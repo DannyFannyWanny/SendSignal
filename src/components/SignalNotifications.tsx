@@ -4,12 +4,20 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { Signal } from '@/lib/signals'
 
+// Extended interface for signals with profile data
+interface SignalWithProfile extends Signal {
+  sender?: {
+    id: string
+    first_name: string | null
+  }
+}
+
 interface SignalNotificationsProps {
   userId: string
 }
 
 export default function SignalNotifications({ userId }: SignalNotificationsProps) {
-  const [incomingSignals, setIncomingSignals] = useState<Signal[]>([])
+  const [incomingSignals, setIncomingSignals] = useState<SignalWithProfile[]>([])
   const [loading, setLoading] = useState(false)
 
   // Fetch incoming signals

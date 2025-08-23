@@ -4,12 +4,20 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { Signal } from '@/lib/signals'
 
+// Extended interface for signals with profile data
+interface SignalWithProfile extends Signal {
+  recipient?: {
+    id: string
+    first_name: string | null
+  }
+}
+
 interface SentSignalsProps {
   userId: string
 }
 
 export default function SentSignals({ userId }: SentSignalsProps) {
-  const [sentSignals, setSentSignals] = useState<Signal[]>([])
+  const [sentSignals, setSentSignals] = useState<SignalWithProfile[]>([])
   const [loading, setLoading] = useState(false)
 
   // Fetch sent signals
