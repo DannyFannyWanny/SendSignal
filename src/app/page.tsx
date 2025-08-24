@@ -339,8 +339,8 @@ export default function Home() {
 
 
 
-  // Loading state - show skeleton UI instead of spinner
-  if (loading) {
+  // Loading state - show skeleton UI immediately, don't wait for profile
+  if (loading && !user) {
     return (
       <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 p-4" style={{
         background: 'linear-gradient(to bottom right, #fafafa, #ffffff, #f5f5f5)',
@@ -455,8 +455,71 @@ export default function Home() {
     )
   }
 
-  // Session exists but no profile - show profile form
+  // Session exists but no profile - show profile form or skeleton while loading
   if (!hasProfile) {
+    // If we're still loading profile, show skeleton UI instead of blocking
+    if (loading) {
+      return (
+        <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 p-4" style={{
+          background: 'linear-gradient(to bottom right, #fafafa, #ffffff, #f5f5f5)',
+          minHeight: '100vh',
+          padding: '1rem'
+        }}>
+          <div className="container max-w-4xl mx-auto pt-6 space-y-4">
+            {/* Welcome Header Skeleton */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 border border-neutral-200/50" style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.8)',
+              backdropFilter: 'blur(8px)',
+              borderRadius: '1.5rem',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+              padding: '1.5rem',
+              border: '1px solid rgba(229, 229, 229, 0.5)'
+            }}>
+              <div className="w-48 h-8 bg-neutral-200 rounded animate-pulse mb-3"></div>
+              <div className="w-64 h-4 bg-neutral-100 rounded animate-pulse"></div>
+            </div>
+
+            {/* Signals Skeleton */}
+            <SignalsSkeleton />
+
+            {/* Nearby Users Skeleton */}
+            <NearbyUsersSkeleton />
+
+            {/* Presence Control Skeleton */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 border border-neutral-200/50" style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.8)',
+              backdropFilter: 'blur(8px)',
+              borderRadius: '1.5rem',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+              padding: '1.5rem',
+              border: '1px solid rgba(229, 229, 229, 0.5)'
+            }}>
+              <div className="w-32 h-6 bg-neutral-200 rounded animate-pulse mb-2"></div>
+              <div className="w-64 h-4 bg-neutral-100 rounded animate-pulse mb-6"></div>
+              
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <div className="w-20 h-4 bg-neutral-200 rounded animate-pulse mb-1"></div>
+                  <div className="w-40 h-3 bg-neutral-100 rounded animate-pulse mb-1"></div>
+                  <div className="w-36 h-3 bg-neutral-100 rounded animate-pulse"></div>
+                </div>
+                <div className="w-32 h-12 bg-neutral-200 rounded-xl animate-pulse"></div>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="w-20 h-4 bg-neutral-200 rounded animate-pulse mb-1"></div>
+                  <div className="w-48 h-3 bg-neutral-100 rounded animate-pulse"></div>
+                </div>
+                <div className="w-32 h-10 bg-neutral-200 rounded-lg animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        </main>
+      )
+    }
+    
+    // Profile form for users without profiles
     return (
       <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 flex items-center justify-center p-4" style={{
         background: 'linear-gradient(to bottom right, #fafafa, #ffffff, #f5f5f5)',
