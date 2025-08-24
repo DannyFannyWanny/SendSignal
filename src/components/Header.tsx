@@ -10,6 +10,8 @@ import { User } from '@supabase/supabase-js'
 export default function Header() {
   const [user, setUser] = useState<User | null>(null)
   const router = useRouter()
+  
+  console.log('🔍 Header render - user:', user?.id, 'router:', !!router)
 
   useEffect(() => {
     const checkSession = async () => {
@@ -94,7 +96,10 @@ export default function Header() {
               </button>
             ) : (
               <button
-                onClick={() => router.push('/auth')}
+                onClick={() => {
+                  console.log('🔍 Sign in button clicked, navigating to /auth')
+                  router.push('/auth')
+                }}
                 className="px-3 py-1.5 text-sm text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-md transition-colors duration-200"
                 style={{
                   borderRadius: '0.375rem',
