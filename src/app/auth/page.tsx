@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { User } from '@supabase/supabase-js'
+import { getMinimumDateOfBirth } from '@/lib/utils'
 
 export default function AuthPage() {
   const [email, setEmail] = useState('')
@@ -12,6 +13,7 @@ export default function AuthPage() {
   const [message, setMessage] = useState('')
   const [user, setUser] = useState<User | null>(null)
   const [firstName, setFirstName] = useState('')
+  const [dateOfBirth, setDateOfBirth] = useState('')
   const [profileLoading, setProfileLoading] = useState(false)
   const [shouldRedirect, setShouldRedirect] = useState(false)
   const [isSignUp, setIsSignUp] = useState(false)
@@ -160,6 +162,7 @@ export default function AuthPage() {
         .upsert({ 
           id: user.id, 
           first_name: firstName.trim(),
+          date_of_birth: dateOfBirth,
           created_at: new Date().toISOString()
         }, {
           onConflict: 'id'
@@ -350,6 +353,30 @@ export default function AuthPage() {
                   }}
                 />
               </div>
+              
+              <div>
+                <label htmlFor="dateOfBirth" className="block text-sm font-medium text-neutral-700 mb-2">
+                  Date of Birth
+                </label>
+                <input
+                  id="dateOfBirth"
+                  type="date"
+                  value={dateOfBirth}
+                  onChange={(e) => setDateOfBirth(e.target.value)}
+                  required
+                  max={getMinimumDateOfBirth()}
+                  className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-500 focus:border-transparent transition-all duration-200 text-base"
+                  style={{
+                    borderRadius: '0.5rem',
+                    border: '1px solid #d4d4d4',
+                    transition: 'all 0.2s'
+                  }}
+                />
+                <p className="mt-1 text-xs text-neutral-500">
+                  You must be 18 or older to use this app
+                </p>
+              </div>
+              
               <div className="text-center">
                 <button
                   type="submit"

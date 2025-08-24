@@ -13,10 +13,12 @@ import NearbyUsersSkeleton from '@/components/NearbyUsersSkeleton'
 import SignalsSkeleton from '@/components/SignalsSkeleton'
 import { getDistance } from 'geolib'
 import { formatDistanceToNow } from 'date-fns'
+import { formatAge } from '@/lib/utils'
 
 interface NearbyUser {
   id: string
   first_name: string | null
+  dateOfBirth: string | null
   distance: number
   freshness: string
   coords: { lat: number; lng: number }
@@ -106,12 +108,12 @@ export default function Home() {
 
       // Fetch profiles for all users in one query
       const userIds = validPresenceData.map(p => p.user_id)
-      let profilesData: { id: string; first_name: string | null }[] = []
+      let profilesData: { id: string; first_name: string | null; date_of_birth: string | null }[] = []
       
       if (userIds.length > 0) {
         const { data: profiles, error: profilesError } = await supabase
           .from('profiles')
-          .select('id, first_name')
+          .select('id, first_name, date_of_birth')
           .in('id', userIds)
         
         if (profilesError) {
@@ -147,6 +149,7 @@ export default function Home() {
           return {
             id: presence.user_id,
             first_name: profileData?.first_name || 'Someone',
+            dateOfBirth: profileData?.date_of_birth || null,
             distance: dist,
             freshness: formatDistanceToNow(updatedAt, { addSuffix: true }),
             coords,
@@ -561,7 +564,7 @@ export default function Home() {
             Welcome back, {profile!.first_name}! 👋
           </h1>
           <p className="text-neutral-600 text-sm">
-            You&apos;re now signed in and ready to connect with people nearby.
+            You&apos;re {formatAge(profile!.date_of_birth)} and ready to connect with people nearby.
           </p>
         </div>
 
@@ -614,7 +617,7 @@ export default function Home() {
                         {nearbyUser.first_name || 'Someone'}
                       </p>
                       <p className="text-xs text-neutral-500">
-                        {formatDistance(nearbyUser.distance)} away • {nearbyUser.freshness}
+                        {formatDistance(nearbyUser.distance)} away • {nearbyUser.freshness} • {formatAge(nearbyUser.dateOfBirth)}
                       </p>
                     </div>
                   </div>

@@ -7,6 +7,7 @@ import { Session, User } from '@supabase/supabase-js'
 interface Profile {
   id: string
   first_name: string | null
+  date_of_birth: string | null
   created_at: string
 }
 
@@ -70,7 +71,7 @@ export function useSession() {
       
       const fetchPromise = supabase
         .from('profiles')
-        .select('id, first_name, created_at')
+        .select('id, first_name, date_of_birth, created_at')
         .eq('id', userId)
         .single()
       
