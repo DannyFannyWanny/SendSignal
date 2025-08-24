@@ -14,11 +14,13 @@ import SignalsSkeleton from '@/components/SignalsSkeleton'
 import { getDistance } from 'geolib'
 import { formatDistanceToNow } from 'date-fns'
 import { formatAge } from '@/lib/utils'
+import ProfilePicture from '@/components/ProfilePicture'
 
 interface NearbyUser {
   id: string
   first_name: string | null
   dateOfBirth: string | null
+  profilePictureUrl: string | null
   distance: number
   freshness: string
   coords: { lat: number; lng: number }
@@ -108,12 +110,12 @@ export default function Home() {
 
       // Fetch profiles for all users in one query
       const userIds = validPresenceData.map(p => p.user_id)
-      let profilesData: { id: string; first_name: string | null; date_of_birth: string | null }[] = []
+      let profilesData: { id: string; first_name: string | null; date_of_birth: string | null; profile_picture_url: string | null }[] = []
       
       if (userIds.length > 0) {
         const { data: profiles, error: profilesError } = await supabase
           .from('profiles')
-          .select('id, first_name, date_of_birth')
+          .select('id, first_name, date_of_birth, profile_picture_url')
           .in('id', userIds)
         
         if (profilesError) {
@@ -150,6 +152,7 @@ export default function Home() {
             id: presence.user_id,
             first_name: profileData?.first_name || 'Someone',
             dateOfBirth: profileData?.date_of_birth || null,
+            profilePictureUrl: profileData?.profile_picture_url || null,
             distance: dist,
             freshness: formatDistanceToNow(updatedAt, { addSuffix: true }),
             coords,
@@ -554,18 +557,31 @@ export default function Home() {
           padding: '1.5rem',
           border: '1px solid rgba(229, 229, 229, 0.5)'
         }}>
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-3" style={{
-            background: 'linear-gradient(to right, #171717, #525252)',
-            backgroundClip: 'text',
-            fontSize: '1.5rem',
-            fontWeight: 'bold',
-            marginBottom: '0.75rem'
-          }}>
-            Welcome back, {profile!.first_name}! 👋
-          </h1>
-          <p className="text-neutral-600 text-sm">
-            You&apos;re {formatAge(profile!.date_of_birth)} and ready to connect with people nearby.
-          </p>
+          <div className="text-center">
+            <div className="flex justify-center mb-4">
+              <ProfilePicture
+                userId={profile!.id}
+                firstName={profile!.first_name}
+                dateOfBirth={profile!.date_of_birth}
+                profilePictureUrl={profile!.profile_picture_url}
+                size="xl"
+                className="mx-auto"
+              />
+            </div>
+            
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-3" style={{
+              background: 'linear-gradient(to right, #171717, #525252)',
+              backgroundClip: 'text',
+              fontSize: '1.5rem',
+              fontWeight: 'bold',
+              marginBottom: '0.75rem'
+            }}>
+              Welcome back, {profile!.first_name}! 👋
+            </h1>
+            <p className="text-neutral-600 text-sm">
+              You&apos;re {formatAge(profile!.date_of_birth)} and ready to connect with people nearby.
+            </p>
+          </div>
         </div>
 
         {/* Signal Notifications */}
@@ -611,6 +627,15 @@ export default function Home() {
                       borderRadius: '50%',
                       backgroundColor: nearbyUser.isActive ? '#10b981' : '#9ca3af'
                     }}></div>
+                    
+                    <ProfilePicture
+                      userId={nearbyUser.id}
+                      firstName={nearbyUser.first_name}
+                      dateOfBirth={nearbyUser.dateOfBirth}
+                      profilePictureUrl={nearbyUser.profilePictureUrl}
+                      size="sm"
+                      className="flex-shrink-0"
+                    />
                     
                     <div>
                       <p className="font-medium text-neutral-900 text-sm">

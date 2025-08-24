@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { User } from '@supabase/supabase-js'
 import { getMinimumDateOfBirth } from '@/lib/utils'
+import { uploadProfileImage } from '@/lib/imageUtils'
+import ImageUpload from '@/components/ImageUpload'
 
 export default function AuthPage() {
   const [email, setEmail] = useState('')
@@ -14,6 +16,7 @@ export default function AuthPage() {
   const [user, setUser] = useState<User | null>(null)
   const [firstName, setFirstName] = useState('')
   const [dateOfBirth, setDateOfBirth] = useState('')
+  const [selectedImage, setSelectedImage] = useState<File | null>(null)
   const [profileLoading, setProfileLoading] = useState(false)
   const [shouldRedirect, setShouldRedirect] = useState(false)
   const [isSignUp, setIsSignUp] = useState(false)
@@ -156,6 +159,18 @@ export default function AuthPage() {
 
     setProfileLoading(true)
     try {
+      let profilePictureUrl = null
+      
+      // Upload profile picture if selected
+      if (selectedImage && selectedImage.size > 0) {
+        try {
+          profilePictureUrl = await uploadProfileImage(selectedImage, user.id, supabase)
+        } catch (error) {
+          console.error('Failed to upload profile picture:', error)
+          // Continue without profile picture
+        }
+      }
+      
       // Use upsert to create or update the profile
       const { error } = await supabase
         .from('profiles')
@@ -163,6 +178,7 @@ export default function AuthPage() {
           id: user.id, 
           first_name: firstName.trim(),
           date_of_birth: dateOfBirth,
+          profile_picture_url: profilePictureUrl,
           created_at: new Date().toISOString()
         }, {
           onConflict: 'id'
@@ -374,6 +390,19 @@ export default function AuthPage() {
                 />
                 <p className="mt-1 text-xs text-neutral-500">
                   You must be 18 or older to use this app
+                </p>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                  Profile Picture
+                </label>
+                <ImageUpload
+                  onImageSelect={setSelectedImage}
+                  className="w-full"
+                />
+                <p className="mt-1 text-xs text-neutral-500">
+                  Upload a clear photo of yourself (will be resized to 400x400px)
                 </p>
               </div>
               
