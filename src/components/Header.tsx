@@ -56,11 +56,11 @@ export default function Header() {
         <div className="flex items-center justify-between">
           {/* Brand */}
           <div className="flex items-center space-x-2 sm:space-x-3">
-            <div className="flex items-center justify-center w-8 h-8 bg-white rounded-2xl shadow-sm" style={{
+            <div className="flex items-center justify-center w-8 h-8 bg-white rounded-2xl shadow-sm border border-gray-200" style={{
               width: '2rem',
               height: '2rem',
               borderRadius: '1rem',
-              boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
+              boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.15)'
             }}>
               <div className="w-4 h-1 bg-black rounded-full" style={{
                 width: '1rem',

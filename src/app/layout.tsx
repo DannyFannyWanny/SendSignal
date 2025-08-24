@@ -26,10 +26,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <head>
-        <link rel="icon" type="image/svg+xml" href="/icon-180x180.svg" />
+        <link rel="icon" type="image/png" href="/icon-180x180.png" />
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" href="/icon-180x180.svg" />
-        <link rel="shortcut icon" href="/icon-180x180.svg" />
+        <link rel="apple-touch-icon" href="/icon-180x180.png" />
+        <link rel="shortcut icon" href="/icon-180x180.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="Signal" />
