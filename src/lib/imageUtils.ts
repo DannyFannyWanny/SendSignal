@@ -55,16 +55,16 @@ export async function processProfileImage(file: File): Promise<Blob> {
 /**
  * Validate image file
  */
-export function validateImageFile(file: File): { valid: boolean; error?: string } {
+export function validateImageFile(file: File): Promise<{ valid: boolean; error?: string }> {
   // Check file type
   if (!file.type.startsWith('image/')) {
-    return { valid: false, error: 'Please select an image file' }
+    return Promise.resolve({ valid: false, error: 'Please select an image file' })
   }
   
   // Check file size (5MB max)
   const maxSize = 5 * 1024 * 1024 // 5MB
   if (file.size > maxSize) {
-    return { valid: false, error: 'Image must be smaller than 5MB' }
+    return Promise.resolve({ valid: false, error: 'Image must be smaller than 5MB' })
   }
   
   // Check dimensions (minimum 100x100)
