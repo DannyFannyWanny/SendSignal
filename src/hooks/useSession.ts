@@ -20,15 +20,12 @@ export function useSession() {
     // Get initial session
     const getInitialSession = async () => {
       try {
-        console.log('🔐 Getting initial session...')
         const { data: { session } } = await supabase.auth.getSession()
-        console.log('📱 Initial session result:', { hasSession: !!session, userId: session?.user?.id })
         
         setSession(session)
         setUser(session?.user || null)
         
         if (session?.user) {
-          console.log('👤 Fetching profile for user:', session.user.id)
           // Add timeout for profile fetch
           try {
             await Promise.race([
@@ -36,14 +33,13 @@ export function useSession() {
               new Promise((_, reject) => setTimeout(() => reject(new Error('Profile fetch timeout')), 15000))
             ])
           } catch (error) {
-            console.error('⏰ Profile fetch timed out, continuing without profile:', error)
+            console.error('Profile fetch timed out, continuing without profile:', error)
             setProfile(null)
           }
         }
       } catch (error) {
-        console.error('❌ Error getting initial session:', error)
+        console.error('Error getting initial session:', error)
       } finally {
-        console.log('✅ Setting loading to false')
         setLoading(false)
       }
     }
@@ -53,16 +49,12 @@ export function useSession() {
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('🔄 Auth state change:', { event, hasSession: !!session, userId: session?.user?.id })
-        
         setSession(session)
         setUser(session?.user || null)
         
         if (event === 'SIGNED_IN' && session?.user) {
-          console.log('🔐 User signed in, fetching profile...')
           await fetchProfile(session.user.id)
         } else if (event === 'SIGNED_OUT') {
-          console.log('🚪 User signed out, clearing profile')
           setProfile(null)
         }
       }
@@ -73,8 +65,6 @@ export function useSession() {
 
   const fetchProfile = async (userId: string) => {
     try {
-      console.log('📋 Fetching profile for user:', userId)
-      
       // Add timeout to prevent hanging
       const timeoutPromise = new Promise<never>((_, reject) => {
         setTimeout(() => reject(new Error('Profile fetch timeout after 10 seconds')), 10000)
@@ -90,14 +80,13 @@ export function useSession() {
       const { data, error } = result
 
       if (error) {
-        console.error('❌ Error fetching profile:', error)
+        console.error('Error fetching profile:', error)
         return
       }
 
-      console.log('✅ Profile fetched successfully:', { firstName: data?.first_name, id: data?.id })
       setProfile(data)
     } catch (error) {
-      console.error('💥 Error in fetchProfile:', error)
+      console.error('Error in fetchProfile:', error)
       // Set profile to null to prevent infinite loading
       setProfile(null)
     }
@@ -111,7 +100,7 @@ export function useSession() {
     }
   }
 
-  const returnValue = {
+  return {
     session,
     user,
     profile,
@@ -120,8 +109,4 @@ export function useSession() {
     isAuthenticated: !!session,
     hasProfile: !!profile?.first_name
   }
-  
-  console.log('🔄 useSession return value:', returnValue)
-  
-  return returnValue
 }

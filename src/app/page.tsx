@@ -9,6 +9,8 @@ import { useSession } from '@/hooks/useSession'
 import ProfileForm from '@/components/ProfileForm'
 import SignalNotifications from '@/components/SignalNotifications'
 import SentSignals from '@/components/SentSignals'
+import NearbyUsersSkeleton from '@/components/NearbyUsersSkeleton'
+import SignalsSkeleton from '@/components/SignalsSkeleton'
 import { getDistance } from 'geolib'
 import { formatDistanceToNow } from 'date-fns'
 
@@ -335,25 +337,65 @@ export default function Home() {
     }
   }
 
-  // Debug logging to help diagnose Chrome refresh issues
-  console.log('🔍 Page render state:', { 
-    loading, 
-    user: user?.id, 
-    profile: profile?.first_name, 
-    isAuthenticated, 
-    hasProfile,
-    profileCompleted 
-  })
 
-  // Loading state
+
+  // Loading state - show skeleton UI instead of spinner
   if (loading) {
-    console.log('⏳ Showing loading spinner...')
     return (
-      <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 flex items-center justify-center p-4">
-        <div className="text-center">
-          <div className="w-8 h-8 border-4 border-neutral-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-neutral-600">Loading...</p>
-          <p className="text-xs text-neutral-400 mt-2">Checking authentication...</p>
+      <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 p-4" style={{
+        background: 'linear-gradient(to bottom right, #fafafa, #ffffff, #f5f5f5)',
+        minHeight: '100vh',
+        padding: '1rem'
+      }}>
+        <div className="container max-w-4xl mx-auto pt-6 space-y-4">
+          {/* Welcome Header Skeleton */}
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 border border-neutral-200/50" style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            backdropFilter: 'blur(8px)',
+            borderRadius: '1.5rem',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            padding: '1.5rem',
+            border: '1px solid rgba(229, 229, 229, 0.5)'
+          }}>
+            <div className="w-48 h-8 bg-neutral-200 rounded animate-pulse mb-3"></div>
+            <div className="w-64 h-4 bg-neutral-100 rounded animate-pulse"></div>
+          </div>
+
+          {/* Signals Skeleton */}
+          <SignalsSkeleton />
+
+          {/* Nearby Users Skeleton */}
+          <NearbyUsersSkeleton />
+
+          {/* Presence Control Skeleton */}
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 border border-neutral-200/50" style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            backdropFilter: 'blur(8px)',
+            borderRadius: '1.5rem',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            padding: '1.5rem',
+            border: '1px solid rgba(229, 229, 229, 0.5)'
+          }}>
+            <div className="w-32 h-6 bg-neutral-200 rounded animate-pulse mb-2"></div>
+            <div className="w-64 h-4 bg-neutral-100 rounded animate-pulse mb-6"></div>
+            
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <div className="w-20 h-4 bg-neutral-200 rounded animate-pulse mb-1"></div>
+                <div className="w-40 h-3 bg-neutral-100 rounded animate-pulse mb-1"></div>
+                <div className="w-36 h-3 bg-neutral-100 rounded animate-pulse"></div>
+              </div>
+              <div className="w-32 h-12 bg-neutral-200 rounded-xl animate-pulse"></div>
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="w-20 h-4 bg-neutral-200 rounded animate-pulse mb-1"></div>
+                <div className="w-48 h-3 bg-neutral-100 rounded animate-pulse"></div>
+              </div>
+              <div className="w-32 h-10 bg-neutral-200 rounded-lg animate-pulse"></div>
+            </div>
+          </div>
         </div>
       </main>
     )
@@ -361,7 +403,6 @@ export default function Home() {
 
   // No session - show CTA
   if (!isAuthenticated) {
-    console.log('🚫 No authentication, showing CTA...')
     return (
       <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 flex items-center justify-center p-4 sm:p-6" style={{
         background: 'linear-gradient(to bottom right, #fafafa, #ffffff, #f5f5f5)',
@@ -416,7 +457,6 @@ export default function Home() {
 
   // Session exists but no profile - show profile form
   if (!hasProfile) {
-    console.log('👤 User authenticated but no profile, showing profile form...')
     return (
       <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 flex items-center justify-center p-4" style={{
         background: 'linear-gradient(to bottom right, #fafafa, #ffffff, #f5f5f5)',
@@ -432,7 +472,6 @@ export default function Home() {
   }
 
   // Session exists with profile - show presence UI
-  console.log('🎯 User authenticated with profile, showing main UI...')
   return (
     <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 p-4" style={{
       background: 'linear-gradient(to bottom right, #fafafa, #ffffff, #f5f5f5)',
