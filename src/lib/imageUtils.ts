@@ -1,5 +1,7 @@
 // Image processing utilities for profile pictures
 
+import { SupabaseClient } from '@supabase/supabase-js'
+
 /**
  * Compress and resize image to 400x400px JPG
  */
@@ -86,7 +88,7 @@ export function validateImageFile(file: File): { valid: boolean; error?: string 
 export async function uploadProfileImage(
   file: File, 
   userId: string, 
-  supabase: any
+  supabase: SupabaseClient
 ): Promise<string> {
   try {
     // Process image to 400x400 JPG
@@ -96,8 +98,10 @@ export async function uploadProfileImage(
     const timestamp = Date.now()
     const filename = `${userId}_${timestamp}.jpg`
     
+    console.log('Uploading image:', { filename, size: processedBlob.size, userId })
+    
     // Upload to Supabase Storage
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from('profile-pictures')
       .upload(filename, processedBlob, {
         contentType: 'image/jpeg',
@@ -106,14 +110,18 @@ export async function uploadProfileImage(
       })
     
     if (error) {
+      console.error('Storage upload error:', error)
       throw new Error(`Upload failed: ${error.message}`)
     }
+    
+    console.log('Upload successful')
     
     // Get public URL
     const { data: urlData } = supabase.storage
       .from('profile-pictures')
       .getPublicUrl(filename)
     
+    console.log('Public URL:', urlData.publicUrl)
     return urlData.publicUrl
   } catch (error) {
     console.error('Image upload error:', error)
@@ -126,7 +134,7 @@ export async function uploadProfileImage(
  */
 export async function deleteProfileImage(
   imageUrl: string, 
-  supabase: any
+  supabase: SupabaseClient
 ): Promise<void> {
   try {
     // Extract filename from URL
