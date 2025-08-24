@@ -62,11 +62,11 @@ export default function Header() {
               borderRadius: '1rem',
               boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
             }}>
-              <div className="w-4 h-1 bg-neutral-900 rounded-full" style={{
+              <div className="w-4 h-1 bg-black rounded-full" style={{
                 width: '1rem',
                 height: '0.25rem',
                 borderRadius: '9999px',
-                backgroundColor: '#171717'
+                backgroundColor: '#000000'
               }}></div>
             </div>
             <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent" style={{

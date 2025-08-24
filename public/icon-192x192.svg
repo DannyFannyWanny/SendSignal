@@ -1,0 +1,7 @@
+<svg width="192" height="192" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg">
+  <!-- White rounded rectangle background -->
+  <rect x="21" y="21" width="150" height="150" rx="21" fill="white" stroke="none"/>
+  
+  <!-- Black horizontal bar in center -->
+  <rect x="53" y="85" width="86" height="22" rx="11" fill="black"/>
+</svg>
