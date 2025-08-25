@@ -13,8 +13,12 @@ import NearbyUsersSkeleton from '@/components/NearbyUsersSkeleton'
 import SignalsSkeleton from '@/components/SignalsSkeleton'
 import { getDistance } from 'geolib'
 import { formatDistanceToNow } from 'date-fns'
-import { formatAge } from '@/lib/utils'
+import { formatAge, calculateAge } from '@/lib/utils'
 import ProfilePicture from '@/components/ProfilePicture'
+
+// Constants
+const NEARBY_RADIUS_METERS = 45.72 // 150 feet in meters
+const NEARBY_RADIUS_FEET = 150 // 150 feet for display
 
 interface NearbyUser {
   id: string
@@ -159,6 +163,7 @@ export default function Home() {
             isActive
           }
         })
+        .filter(user => user.distance <= NEARBY_RADIUS_METERS) // Filter users within 150 feet
         .sort((a, b) => a.distance - b.distance)
 
       console.log('✅ Final nearby users list:', nearby)
@@ -353,7 +358,7 @@ export default function Home() {
         minHeight: '100vh',
         padding: '1rem'
       }}>
-        <div className="container max-w-4xl mx-auto pt-6 space-y-4">
+        <div className="container max-w-4xl mx-auto pt-6 space-y-6">
           {/* Welcome Header Skeleton */}
           <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 border border-neutral-200/50" style={{
             backgroundColor: 'rgba(255, 255, 255, 0.8)',
@@ -471,7 +476,7 @@ export default function Home() {
           minHeight: '100vh',
           padding: '1rem'
         }}>
-          <div className="container max-w-4xl mx-auto pt-6 space-y-4">
+          <div className="container max-w-4xl mx-auto pt-6 space-y-6">
             {/* Welcome Header Skeleton */}
             <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 border border-neutral-200/50" style={{
               backgroundColor: 'rgba(255, 255, 255, 0.8)',
@@ -547,7 +552,7 @@ export default function Home() {
       minHeight: '100vh',
       padding: '1rem'
     }}>
-      <div className="container max-w-4xl mx-auto pt-6 space-y-4">
+      <div className="container max-w-4xl mx-auto pt-8 space-y-16">
         {/* Welcome Header */}
         <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 border border-neutral-200/50" style={{
           backgroundColor: 'rgba(255, 255, 255, 0.8)',
@@ -558,58 +563,51 @@ export default function Home() {
           border: '1px solid rgba(229, 229, 229, 0.5)'
         }}>
           <div className="text-center">
-            <div className="flex justify-center mb-4">
+            <div className="flex justify-center mb-6">
               <ProfilePicture
                 userId={profile!.id}
                 firstName={profile!.first_name}
                 dateOfBirth={profile!.date_of_birth}
                 profilePictureUrl={profile!.profile_picture_url}
-                size="xl"
+                size="lg"
                 className="mx-auto"
               />
             </div>
             
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-3" style={{
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent mb-4" style={{
               background: 'linear-gradient(to right, #171717, #525252)',
               backgroundClip: 'text',
-              fontSize: '1.5rem',
+              fontSize: '1.75rem',
               fontWeight: 'bold',
-              marginBottom: '0.75rem'
+              marginBottom: '1rem'
             }}>
-              Welcome back, {profile!.first_name}! 👋
+              Welcome back, {profile!.first_name}
             </h1>
-            <p className="text-neutral-600 text-sm">
-              You&apos;re {formatAge(profile!.date_of_birth)} and ready to connect with people nearby.
+            <p className="text-neutral-600 text-base mb-2">
+              Ensure your status is visible and refresh location to send and receive signals.
             </p>
           </div>
         </div>
 
-        {/* Signal Notifications */}
-        <SignalNotifications userId={user!.id} />
-
-        {/* Sent Signals */}
-        <SentSignals userId={user!.id} />
-
         {/* Nearby Users Card */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 border border-neutral-200/50" style={{
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl px-6 pt-6 pb-4 border border-neutral-200/50 mb-16" style={{
           backgroundColor: 'rgba(255, 255, 255, 0.8)',
           backdropFilter: 'blur(8px)',
           borderRadius: '1.5rem',
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-          padding: '1.5rem',
           border: '1px solid rgba(229, 229, 229, 0.5)'
         }}>
           <h2 className="text-xl font-bold text-neutral-900 mb-4">Nearby Now</h2>
           
           {nearbyUsers.length === 0 ? (
-            <div className="text-center py-6">
-              <p className="text-neutral-500 text-sm">No nearby users found</p>
-              <p className="text-xs text-neutral-400 mt-1">
-                Make sure you&apos;re open to receiving signals and have location enabled
+            <div className="text-center py-8">
+              <p className="text-neutral-500 text-base mb-2">No nearby users found</p>
+              <p className="text-sm text-neutral-400">
+                Only users within {NEARBY_RADIUS_FEET} feet will appear here
               </p>
             </div>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-3">
               {nearbyUsers.map((nearbyUser) => (
                 <div key={nearbyUser.id} className="flex items-center justify-between p-3 bg-white/60 backdrop-blur-sm rounded-xl border border-neutral-200/30 hover:bg-white/80 transition-all duration-200" style={{
                   backgroundColor: 'rgba(255, 255, 255, 0.6)',
@@ -619,40 +617,31 @@ export default function Home() {
                   padding: '0.75rem',
                   transition: 'all 0.2s'
                 }}>
-                  <div className="flex items-center space-x-3">
-                    {/* Activity indicator dot */}
-                    <div className={`w-2 h-2 rounded-full ${nearbyUser.isActive ? 'bg-green-500' : 'bg-neutral-400'}`} style={{
-                      width: '0.5rem',
-                      height: '0.5rem',
-                      borderRadius: '50%',
-                      backgroundColor: nearbyUser.isActive ? '#10b981' : '#9ca3af'
-                    }}></div>
+                  <div className="flex items-center space-x-4">
                     
                     <ProfilePicture
                       userId={nearbyUser.id}
                       firstName={nearbyUser.first_name}
                       dateOfBirth={nearbyUser.dateOfBirth}
                       profilePictureUrl={nearbyUser.profilePictureUrl}
-                      size="sm"
+                      size="md"
                       className="flex-shrink-0"
                     />
                     
-                    <div>
+                    <div className="flex items-center space-x-2">
                       <p className="font-medium text-neutral-900 text-sm">
-                        {nearbyUser.first_name || 'Someone'}
-                      </p>
-                      <p className="text-xs text-neutral-500">
-                        {formatDistance(nearbyUser.distance)} away • {nearbyUser.freshness} • {formatAge(nearbyUser.dateOfBirth)}
+                        {nearbyUser.first_name || 'Someone'}, {calculateAge(nearbyUser.dateOfBirth) ?? ''}
                       </p>
                     </div>
                   </div>
                   
                   <button 
                     onClick={() => handleSendSignal(nearbyUser.id)}
-                    className="px-3 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-white rounded-lg text-xs font-medium transition-all duration-200 shadow-sm hover:shadow-md" 
+                    className="px-3 py-2 bg-neutral-900 hover:bg-neutral-800 text-white rounded-lg text-xs font-medium transition-all duration-200 shadow-sm hover:shadow-md" 
                     style={{
                       borderRadius: '0.5rem',
-                      transition: 'all 0.2s'
+                      transition: 'all 0.2s',
+                      minHeight: '40px'
                     }}
                   >
                     Send Signal
@@ -663,36 +652,39 @@ export default function Home() {
           )}
         </div>
 
+        {/* Signal Notifications */}
+        <SignalNotifications userId={user!.id} />
+
+        {/* Sent Signals */}
+        <SentSignals userId={user!.id} />
+
         {/* Presence Control Card */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 border border-neutral-200/50" style={{
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-4 pt-4 pb-4 border border-neutral-200/50" style={{
           backgroundColor: 'rgba(255, 255, 255, 0.8)',
           backdropFilter: 'blur(8px)',
           borderRadius: '1.5rem',
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-          padding: '1.5rem',
           border: '1px solid rgba(229, 229, 229, 0.5)'
         }}>
-          <h2 className="text-xl font-bold text-neutral-900 mb-2">Go visible</h2>
-          <p className="text-neutral-600 mb-6 text-sm">
-            Flip it on when you&apos;re open to meet. Flip it off when you&apos;re done.
+          <h2 className="text-xl font-bold text-neutral-900 mb-5">Visibility</h2>
+          <p className="text-neutral-600 mb-5 text-base">
+            Control who can see you and send signals.
           </p>
           
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-4">
             <div>
-              <p className="text-neutral-700 mb-1 font-medium text-sm">Status</p>
-              <p className="text-xs text-neutral-500">
-                {isOpen ? 'You are currently visible to nearby users' : 'You are currently hidden from nearby users'}
+              <p className="text-neutral-900 mb-2 font-bold text-base">Status</p>
+              <p className="text-sm text-neutral-500 mb-1">
+                {isOpen ? 'Visible to nearby users' : 'Hidden from nearby users'}
               </p>
-              <p className="text-xs text-neutral-400 mt-1">
-                {isOpen ? 'Click "Go Inactive" to hide yourself' : 'Click "Go Active" to become visible'}
-              </p>
+              
             </div>
             
             <button
               onClick={() => handleToggleOpen(!isOpen)}
               disabled={presenceLoading}
               className={`
-                relative px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-md hover:shadow-lg
+                relative px-8 py-4 rounded-xl font-semibold transition-all duration-300 shadow-md hover:shadow-lg
                 ${isOpen 
                   ? 'bg-green-600 hover:bg-green-700 text-white shadow-green-200' : 'bg-neutral-200 hover:bg-neutral-300 text-neutral-800 shadow-neutral-200'
                 }
@@ -701,7 +693,9 @@ export default function Home() {
               `}
               style={{
                 borderRadius: '0.75rem',
-                transition: 'all 0.3s'
+                transition: 'all 0.3s',
+                minHeight: '56px',
+                fontSize: '1rem'
               }}
             >
               {presenceLoading ? 'Updating...' : (isOpen ? 'Go Inactive' : 'Go Active')}
@@ -713,12 +707,14 @@ export default function Home() {
             </button>
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="border-t border-neutral-200 my-4"></div>
+
+          <div className="flex items-center justify-between mt-1">
             <div>
-              <p className="text-neutral-700 mb-1 font-medium text-sm">Location</p>
-              <p className="text-xs text-neutral-500">
+              <p className="text-neutral-900 mb-2 font-bold text-base">Location</p>
+              <p className="text-sm text-neutral-500">
                 {myCoords 
-                  ? `Lat: ${myCoords.lat.toFixed(4)}, Lng: ${myCoords.lng.toFixed(4)}`
+                  ? 'GPS active'
                   : 'Location not available'
                 }
               </p>
@@ -727,10 +723,11 @@ export default function Home() {
             <button
               onClick={handleRefreshLocation}
               disabled={locationLoading}
-              className="px-3 py-2 bg-neutral-900 hover:bg-neutral-800 text-white rounded-lg text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
+              className="px-4 py-3 bg-neutral-900 hover:bg-neutral-800 text-white rounded-lg text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
               style={{
                 borderRadius: '0.5rem',
-                transition: 'all 0.2s'
+                transition: 'all 0.2s',
+                minHeight: '44px'
               }}
             >
               {locationLoading ? 'Refreshing...' : 'Refresh Location'}

@@ -8,7 +8,7 @@ interface ProfilePictureProps {
   firstName: string | null
   dateOfBirth: string | null
   profilePictureUrl: string | null
-  size?: 'sm' | 'md' | 'lg' | 'xl'
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
   showAge?: boolean
   className?: string
 }
@@ -44,18 +44,23 @@ export default function ProfilePicture({
   // Get initials from first name
   const initials = firstName ? firstName.charAt(0).toUpperCase() : '?'
   
-  // Size classes
-  const sizeClasses = {
-    sm: 'w-8 h-8 text-xs',
-    md: 'w-12 h-12 text-sm',
-    lg: 'w-16 h-16 text-lg',
-    xl: 'w-20 h-20 text-xl'
+  // Explicit pixel sizes to avoid Tailwind pruning/dynamic class issues
+  const sizePxMap: Record<'xs' | 'sm' | 'md' | 'lg' | 'xl', number> = {
+    xs: 32,   // 2rem
+    sm: 40,   // 2.5rem
+    md: 56,   // 3.5rem
+    lg: 72,   // 4.5rem
+    xl: 96,   // 6rem
   }
+  const dimension = sizePxMap[size]
   
   // Show profile picture if available and no error
   if (profilePictureUrl && !imageError) {
     return (
-      <div className={`relative ${sizeClasses[size]} ${className}`}>
+      <div
+        className={`relative overflow-hidden rounded-full ${className}`}
+        style={{ width: dimension, height: dimension, flex: 'none' }}
+      >
         <img
           src={profilePictureUrl}
           alt={`${firstName || 'User'}'s profile picture`}
@@ -70,7 +75,7 @@ export default function ProfilePicture({
         />
         
         {showAge && dateOfBirth && (
-          <div className="absolute -bottom-1 -right-1 bg-white rounded-full px-2 py-1 text-xs font-medium text-gray-700 shadow-sm border border-gray-200">
+          <div className="absolute -bottom-2 -right-2 bg-white rounded-full px-3 py-1.5 text-sm font-medium text-gray-700 shadow-md border border-gray-200">
             {formatAge(dateOfBirth)}
           </div>
         )}
@@ -80,13 +85,16 @@ export default function ProfilePicture({
   
   // Fallback avatar with initials
   return (
-    <div className={`relative ${sizeClasses[size]} ${className}`}>
+    <div
+      className={`relative overflow-hidden rounded-full ${className}`}
+      style={{ width: dimension, height: dimension, flex: 'none' }}
+    >
       <div className={`w-full h-full rounded-full ${avatarColor} flex items-center justify-center text-white font-semibold shadow-sm`}>
         {initials}
       </div>
       
       {showAge && dateOfBirth && (
-        <div className="absolute -bottom-1 -right-1 bg-white rounded-full px-2 py-1 text-xs font-medium text-gray-700 shadow-sm border border-gray-200">
+        <div className="absolute -bottom-2 -right-2 bg-white rounded-full px-3 py-1.5 text-sm font-medium text-gray-700 shadow-md border border-gray-200">
           {formatAge(dateOfBirth)}
         </div>
       )}

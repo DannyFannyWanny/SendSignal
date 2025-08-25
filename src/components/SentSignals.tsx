@@ -142,7 +142,7 @@ export default function SentSignals({ userId }: SentSignalsProps) {
   const getStatusText = (status: string) => {
     switch (status) {
       case 'pending': return 'Pending'
-      case 'accepted': return 'Accepted! 🎉'
+      case 'accepted': return 'Accepted'
       case 'ignored': return 'Ignored'
       case 'expired': return 'Expired'
       default: return status
@@ -150,66 +150,50 @@ export default function SentSignals({ userId }: SentSignalsProps) {
   }
 
   return (
-    <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 border border-neutral-200/50 mb-4" style={{
+    <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl px-6 pt-6 pb-4 border border-neutral-200/50 mb-16" style={{
       backgroundColor: 'rgba(255, 255, 255, 0.8)',
       backdropFilter: 'blur(8px)',
       borderRadius: '1.5rem',
       boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-      padding: '1.5rem',
       border: '1px solid rgba(229, 229, 229, 0.5)'
     }}>
-      <h2 className="text-xl font-bold text-neutral-900 mb-4">📤 Sent Signals</h2>
-      
-      <div className="space-y-3">
+      <h2 className="text-xl font-bold text-neutral-900 mb-5">Sent Signals</h2>
+      <div className="space-y-4">
         {sentSignals.map((signal) => (
-          <div key={signal.id} className="flex items-center justify-between p-4 bg-white/60 backdrop-blur-sm rounded-xl border border-neutral-200/30" style={{
+          <div key={signal.id} className="flex items-center justify-between p-5 bg-white/60 backdrop-blur-sm rounded-xl border border-neutral-200/30" style={{
             backgroundColor: 'rgba(255, 255, 255, 0.6)',
             backdropFilter: 'blur(8px)',
             borderRadius: '0.75rem',
             border: '1px solid rgba(229, 229, 229, 0.3)',
-            padding: '1rem'
+            padding: '1.25rem'
           }}>
             <div className="flex-1">
-              <div className="flex items-center space-x-2 mb-2">
-                <span className={`w-2 h-2 rounded-full ${getStatusColor(signal.status)}`} style={{
-                  width: '0.5rem',
-                  height: '0.5rem',
+              <div className="flex items-center space-x-3 mb-1">
+                <span className={`w-3 h-3 rounded-full ${getStatusColor(signal.status)}`} style={{
+                  width: '0.75rem',
+                  height: '0.75rem',
                   borderRadius: '50%'
                 }}></span>
-                <span className="text-sm font-medium text-neutral-700">
+                <span className="text-base font-medium text-neutral-700">
                   To: <span className="font-semibold">{signal.recipient?.first_name || 'Someone'}</span>
                 </span>
               </div>
-              
-                                   {signal.message && (
-                       <p className="text-xs text-neutral-600 mb-1">&ldquo;{signal.message}&rdquo;</p>
-                     )}
-              
-              <div className="flex items-center space-x-4 text-xs text-neutral-500">
-                <span>Status: <span className="font-medium">{getStatusText(signal.status)}</span></span>
-                <span>Sent: {new Date(signal.created_at).toLocaleTimeString()}</span>
-              </div>
+              <p className="text-sm text-neutral-600">Status: <span className="font-medium">{getStatusText(signal.status)}</span></p>
             </div>
-            
             <div className="flex space-x-2 ml-4">
               {signal.status === 'pending' && (
                 <button
                   onClick={() => handleCancelSignal(signal.id)}
                   disabled={loading}
-                  className="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white rounded-lg text-xs font-medium transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
+                  className="px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
                   style={{
                     borderRadius: '0.5rem',
-                    transition: 'all 0.2s'
+                    transition: 'all 0.2s',
+                    minHeight: '44px'
                   }}
                 >
                   Cancel
                 </button>
-              )}
-              
-              {signal.status === 'accepted' && (
-                <span className="px-3 py-1.5 bg-green-100 text-green-800 rounded-lg text-xs font-medium">
-                  Connected! 🎉
-                </span>
               )}
             </div>
           </div>

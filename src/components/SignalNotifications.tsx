@@ -152,39 +152,38 @@ export default function SignalNotifications({ userId }: SignalNotificationsProps
   // }
 
   return (
-    <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 border border-neutral-200/50 mb-4" style={{
+    <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl px-6 pt-6 pb-4 border border-neutral-200/50 mb-16" style={{
       backgroundColor: 'rgba(255, 255, 255, 0.8)',
       backdropFilter: 'blur(8px)',
       borderRadius: '1.5rem',
       boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-      padding: '1.5rem',
       border: '1px solid rgba(229, 229, 229, 0.5)'
     }}>
-                   <h2 className="text-xl font-bold text-neutral-900 mb-4">📨 Incoming Signals</h2>
+                   <h2 className="text-xl font-bold text-neutral-900 mb-5">Incoming Signals</h2>
       
-      <div className="space-y-3">
-        {incomingSignals.length === 0 ? (
-          <div className="text-center py-4">
-            <p className="text-neutral-500 text-sm">No incoming signals yet</p>
-            <p className="text-xs text-neutral-400 mt-1">When someone sends you a signal, it will appear here</p>
-          </div>
-        ) : (
+              <div className="space-y-4">
+          {incomingSignals.length === 0 ? (
+            <div className="text-center py-6">
+              <p className="text-neutral-500 text-base">No incoming signals yet</p>
+              <p className="text-sm text-neutral-400 mt-2">When someone sends you a signal, it will appear here</p>
+            </div>
+          ) : (
           incomingSignals.map((signal) => (
-          <div key={signal.id} className="flex items-center justify-between p-4 bg-white/60 backdrop-blur-sm rounded-xl border border-neutral-200/30" style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.6)',
-            backdropFilter: 'blur(8px)',
-            borderRadius: '0.75rem',
-            border: '1px solid rgba(229, 229, 229, 0.3)',
-            padding: '1rem'
-          }}>
+                      <div key={signal.id} className="flex items-center justify-between p-5 bg-white/60 backdrop-blur-sm rounded-xl border border-neutral-200/30" style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.6)',
+              backdropFilter: 'blur(8px)',
+              borderRadius: '0.75rem',
+              border: '1px solid rgba(229, 229, 229, 0.3)',
+              padding: '1.25rem'
+            }}>
             <div className="flex-1">
-              <p className="font-medium text-neutral-900 text-sm">
+              <p className="font-medium text-neutral-900 text-base">
                 Signal from <span className="font-semibold">{signal.sender?.first_name || 'Someone'}</span>
               </p>
                                      {signal.message && (
-                         <p className="text-xs text-neutral-600 mt-1">&ldquo;{signal.message}&rdquo;</p>
+                         <p className="text-sm text-neutral-600 mt-2">&ldquo;{signal.message}&rdquo;</p>
                        )}
-              <p className="text-xs text-neutral-500 mt-1">
+              <p className="text-sm text-neutral-500 mt-2">
                 Sent {new Date(signal.created_at).toLocaleTimeString()}
               </p>
             </div>
@@ -193,10 +192,11 @@ export default function SignalNotifications({ userId }: SignalNotificationsProps
               <button
                 onClick={() => handleSignalResponse(signal.id, 'accepted')}
                 disabled={loading}
-                className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-medium transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
+                className="px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
                 style={{
                   borderRadius: '0.5rem',
-                  transition: 'all 0.2s'
+                  transition: 'all 0.2s',
+                  minHeight: '44px'
                 }}
               >
                 Accept
@@ -205,10 +205,11 @@ export default function SignalNotifications({ userId }: SignalNotificationsProps
               <button
                 onClick={() => handleSignalResponse(signal.id, 'ignored')}
                 disabled={loading}
-                className="px-3 py-1.5 bg-neutral-500 hover:bg-neutral-600 text-white rounded-lg text-xs font-medium transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
+                className="px-4 py-2.5 bg-neutral-500 hover:bg-neutral-600 text-white rounded-lg text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
                 style={{
                   borderRadius: '0.5rem',
-                  transition: 'all 0.2s'
+                  transition: 'all 0.2s',
+                  minHeight: '44px'
                 }}
               >
                 Ignore
