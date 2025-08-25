@@ -20,6 +20,7 @@ export default function AuthPage() {
   const [profileLoading, setProfileLoading] = useState(false)
   const [shouldRedirect, setShouldRedirect] = useState(false)
   const [isSignUp, setIsSignUp] = useState(false)
+  const [profileStatus, setProfileStatus] = useState<'unknown' | 'needs_setup' | 'complete'>('unknown')
   const router = useRouter()
 
   useEffect(() => {
@@ -73,16 +74,21 @@ export default function AuthPage() {
         if (error.code !== 'PGRST116') {
           console.error('Error fetching profile:', error)
         }
-        console.error('Error fetching profile:', error)
+        setProfileStatus('needs_setup')
         return
       }
 
       // If profile exists and has first_name, redirect to home
       if (data && data.first_name) {
+        setProfileStatus('complete')
         setShouldRedirect(true)
+      } else {
+        setProfileStatus('needs_setup')
       }
     } catch {
       console.error('Error in fetchProfile')
+      // Fall back to safe default: require setup
+      setProfileStatus('needs_setup')
     }
   }
 
@@ -306,8 +312,8 @@ export default function AuthPage() {
               </div>
             )}
           </>
-        ) : (
-          // Profile setup form
+        ) : profileStatus === 'needs_setup' ? (
+          // Profile setup form (only for new users or incomplete profiles)
           <div className="w-full bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-4 sm:p-5 border border-neutral-200/50" style={{
             backgroundColor: 'rgba(255, 255, 255, 0.8)',
             backdropFilter: 'blur(8px)',
@@ -406,7 +412,7 @@ export default function AuthPage() {
               </p>
             )}
           </div>
-        )}
+        ) : null}
       </div>
     </main>
   )
