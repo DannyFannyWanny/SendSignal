@@ -12,7 +12,7 @@ export const metadata: Metadata = {
       { url: '/icon-512x512.svg', sizes: '512x512', type: 'image/svg+xml' },
     ],
     apple: [
-      { url: '/icon-180x180.svg', sizes: '180x180', type: 'image/svg+xml' },
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
     ],
   },
   manifest: '/manifest.json',
@@ -26,10 +26,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <head>
-        <link rel="icon" type="image/png" href="/icon-180x180.png" />
+        <link rel="icon" type="image/png" href="/apple-touch-icon.png" />
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" href="/icon-180x180.png" />
-        <link rel="shortcut icon" href="/icon-180x180.png" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="shortcut icon" href="/apple-touch-icon.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="Signal" />
