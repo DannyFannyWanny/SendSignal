@@ -23,14 +23,14 @@ export default function AuthPage() {
   const router = useRouter()
 
   useEffect(() => {
-    // Check for existing session
+    // Check for existing session and profile on mount
     const getInitialSession = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession()
-        setUser(session?.user || null)
-        
-        if (session?.user) {
-          await fetchProfile(session.user.id)
+        const currentUser = session?.user || null
+        setUser(currentUser)
+        if (currentUser) {
+          await fetchProfile(currentUser.id)
         }
       } catch {
         console.error('Error getting initial session')
@@ -42,16 +42,16 @@ export default function AuthPage() {
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        setUser(session?.user || null)
-        
-        if (event === 'SIGNED_IN' && session?.user) {
-          await fetchProfile(session.user.id)
+        const authedUser = session?.user || null
+        setUser(authedUser)
+        if (authedUser) {
+          await fetchProfile(authedUser.id)
         }
       }
     )
 
     return () => subscription.unsubscribe()
-  }, []) // fetchProfile is stable, no need to add to deps
+  }, [])
 
   // Handle redirects in a separate useEffect
   useEffect(() => {
@@ -69,10 +69,9 @@ export default function AuthPage() {
         .single()
 
       if (error) {
-        if (error.code === 'PGRST116') { // No rows returned
-          // Profile doesn't exist, create one
-          await createProfileIfNotExists(userId)
-          return
+        // PGRST116 means no profile row yet – that's OK, show profile form
+        if (error.code !== 'PGRST116') {
+          console.error('Error fetching profile:', error)
         }
         console.error('Error fetching profile:', error)
         return
@@ -119,9 +118,10 @@ export default function AuthPage() {
         setMessage('Please check your email to confirm your account, then sign in.')
         setIsSignUp(false)
       } else if (result.data.session) {
-        // Successfully signed in - create profile if it doesn't exist
-        if (isSignUp && result.data.user) {
-          await createProfileIfNotExists(result.data.user.id)
+        // Successfully signed in – check if profile is complete
+        const uid = result.data.user?.id
+        if (uid) {
+          await fetchProfile(uid)
         }
         setMessage('Successfully signed in!')
       }
@@ -129,27 +129,6 @@ export default function AuthPage() {
       setMessage('An error occurred. Please try again.')
     } finally {
       setLoading(false)
-    }
-  }
-
-  const createProfileIfNotExists = async (userId: string) => {
-    try {
-      // Try to insert a new profile, ignore if it already exists
-      const { error } = await supabase
-        .from('profiles')
-        .insert({ 
-          id: userId, 
-          first_name: null,
-          created_at: new Date().toISOString()
-        })
-        .select()
-        .single()
-
-      if (error && error.code !== '23505') { // 23505 is unique constraint violation
-        console.error('Error creating profile:', error)
-      }
-    } catch (err) {
-      console.error('Error in createProfileIfNotExists:', err)
     }
   }
 
