@@ -32,7 +32,7 @@ interface NearbyUser {
 }
 
 export default function Home() {
-  const { user, profile, loading, isAuthenticated, hasProfile } = useSession()
+  const { user, profile, loading, profileLoading, isAuthenticated, hasProfile } = useSession()
   const [isOpen, setIsOpen] = useState(false)
   const [nearbyUsers, setNearbyUsers] = useState<NearbyUser[]>([])
   const [myCoords, setMyCoords] = useState<{ lat: number; lng: number } | null>(null)
@@ -469,7 +469,7 @@ export default function Home() {
   // Session exists but no profile - show profile form or skeleton while loading
   if (!hasProfile) {
     // If we're still loading profile, show skeleton UI instead of blocking
-    if (loading) {
+    if (profileLoading) {
       return (
         <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 p-4" style={{
           background: 'linear-gradient(to bottom right, #fafafa, #ffffff, #f5f5f5)',
