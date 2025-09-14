@@ -449,17 +449,19 @@ export default function Home() {
             
             {/* Action Buttons */}
             <div className="space-y-4">
-              <button
-                onClick={() => router.push('/auth')}
-                className="w-full bg-neutral-900 hover:bg-neutral-800 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg text-base"
-                style={{
-                  borderRadius: '0.5rem',
-                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                  transition: 'all 0.2s'
-                }}
-              >
-                Sign In
-              </button>
+              <div className="text-center">
+                <button
+                  onClick={() => router.push('/auth')}
+                  className="inline-block bg-neutral-900 hover:bg-neutral-800 text-white font-semibold py-2 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg text-base"
+                  style={{
+                    borderRadius: '0.5rem',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  Sign In
+                </button>
+              </div>
               
               <div className="text-center">
                 <p className="text-sm text-neutral-500 mb-3">
@@ -467,7 +469,7 @@ export default function Home() {
                 </p>
                 <button
                   onClick={() => router.push('/auth?mode=signup')}
-                  className="w-full bg-white hover:bg-neutral-50 text-neutral-800 font-medium py-3 px-6 rounded-lg transition-all duration-200 border border-neutral-300 hover:border-neutral-400 shadow-sm hover:shadow-md"
+                  className="inline-block bg-white hover:bg-neutral-50 text-neutral-800 font-medium py-2 px-6 rounded-lg transition-all duration-200 border border-neutral-300 hover:border-neutral-400 shadow-sm hover:shadow-md"
                   style={{
                     borderRadius: '0.5rem',
                     transition: 'all 0.2s'
