@@ -447,37 +447,47 @@ export default function Home() {
               Instantly meet new people nearby.
             </p>
             
-            {/* Action Buttons */}
-            <div className="space-y-4">
-              <div className="text-center">
-                <button
-                  onClick={() => router.push('/auth')}
-                  className="inline-block bg-neutral-900 hover:bg-neutral-800 text-white font-semibold py-2 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg text-base"
-                  style={{
-                    borderRadius: '0.5rem',
-                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                    transition: 'all 0.2s'
-                  }}
-                >
-                  Sign In
-                </button>
-              </div>
-              
-              <div className="text-center">
-                <p className="text-sm text-neutral-500 mb-3">
-                  Don&apos;t have an account?
-                </p>
-                <button
-                  onClick={() => router.push('/auth?mode=signup')}
-                  className="inline-block bg-white hover:bg-neutral-50 text-neutral-800 font-medium py-2 px-6 rounded-lg transition-all duration-200 border border-neutral-300 hover:border-neutral-400 shadow-sm hover:shadow-md"
-                  style={{
-                    borderRadius: '0.5rem',
-                    transition: 'all 0.2s'
-                  }}
-                >
-                  Create Account
-                </button>
-              </div>
+            {/* Sign In Button - Main Focal Point */}
+            <div className="text-center mb-8">
+              <button
+                onClick={() => router.push('/auth')}
+                className="inline-block bg-neutral-900 hover:bg-neutral-800 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg text-base"
+                style={{
+                  borderRadius: '0.5rem',
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                  transition: 'all 0.2s'
+                }}
+              >
+                Sign In
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        {/* Create Account Card - Secondary Section */}
+        <div className="w-full max-w-sm mx-auto mt-8">
+          <div className="bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg p-4 border border-neutral-200/30" style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.6)',
+            backdropFilter: 'blur(8px)',
+            borderRadius: '1rem',
+            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+            padding: '1rem',
+            border: '1px solid rgba(229, 229, 229, 0.3)'
+          }}>
+            <div className="text-center">
+              <p className="text-sm text-neutral-500 mb-3">
+                Don&apos;t have an account?
+              </p>
+              <button
+                onClick={() => router.push('/auth?mode=signup')}
+                className="inline-block bg-white hover:bg-neutral-50 text-neutral-800 font-medium py-2 px-6 rounded-lg transition-all duration-200 border border-neutral-300 hover:border-neutral-400 shadow-sm hover:shadow-md"
+                style={{
+                  borderRadius: '0.5rem',
+                  transition: 'all 0.2s'
+                }}
+              >
+                Create Account
+              </button>
             </div>
           </div>
         </div>
