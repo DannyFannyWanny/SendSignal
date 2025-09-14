@@ -1,6 +1,7 @@
 // Profile Picture component with fallback avatars
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { formatAge } from '@/lib/utils'
 
 interface ProfilePictureProps {
@@ -61,9 +62,11 @@ export default function ProfilePicture({
         className={`relative overflow-hidden rounded-full ${className}`}
         style={{ width: dimension, height: dimension, flex: 'none' }}
       >
-        <img
+        <Image
           src={profilePictureUrl}
           alt={`${firstName || 'User'}'s profile picture`}
+          width={dimension}
+          height={dimension}
           className={`w-full h-full rounded-full object-cover border-2 border-white shadow-sm ${
             imageLoading ? 'animate-pulse bg-gray-200' : ''
           }`}

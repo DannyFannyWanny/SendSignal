@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { Signal } from '@/lib/signals'
 
@@ -21,7 +21,7 @@ export default function SentSignals({ userId }: SentSignalsProps) {
   const [loading, setLoading] = useState(false)
 
   // Fetch sent signals
-  const fetchSentSignals = async () => {
+  const fetchSentSignals = useCallback(async () => {
     try {
       // Get all signals sent by this user (exclude expired ones from main view)
       const { data: signalsData, error: signalsError } = await supabase
@@ -63,7 +63,7 @@ export default function SentSignals({ userId }: SentSignalsProps) {
     } catch (error) {
       console.error('Error in fetchSentSignals:', error)
     }
-  }
+  }, [userId])
 
   // Cancel a pending signal
   const handleCancelSignal = async (signalId: string) => {
@@ -122,7 +122,7 @@ export default function SentSignals({ userId }: SentSignalsProps) {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [userId])
+  }, [userId, fetchSentSignals])
 
   // Don't show anything if no signals
   if (sentSignals.length === 0) {

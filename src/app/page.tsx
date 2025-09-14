@@ -13,7 +13,7 @@ import NearbyUsersSkeleton from '@/components/NearbyUsersSkeleton'
 import SignalsSkeleton from '@/components/SignalsSkeleton'
 import { getDistance } from 'geolib'
 import { formatDistanceToNow } from 'date-fns'
-import { formatAge, calculateAge } from '@/lib/utils'
+import { calculateAge } from '@/lib/utils'
 import ProfilePicture from '@/components/ProfilePicture'
 
 // Constants
@@ -44,6 +44,22 @@ export default function Home() {
   const subscriptionRef = useRef<ReturnType<typeof supabase.channel> | null>(null)
   const fetchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
+  // Function to expire old signals
+  const expireOldSignals = useCallback(async () => {
+    if (!user) return
+    
+    try {
+      const { data, error } = await supabase.rpc('expire_old_signals')
+      if (error) {
+        console.error('Error expiring old signals:', error)
+      } else if (data && data > 0) {
+        console.log(`✅ Expired ${data} old signals`)
+      }
+    } catch (error) {
+      console.error('Error in expireOldSignals:', error)
+    }
+  }, [user])
+
   // Fetch initial presence when user and profile are available
   useEffect(() => {
     if (user && hasProfile && !profileCompleted) {
@@ -52,7 +68,7 @@ export default function Home() {
       // Also expire old signals when user loads the page
       expireOldSignals()
     }
-  }, [user, hasProfile, profileCompleted])
+  }, [user, hasProfile, profileCompleted, expireOldSignals])
 
   // Cleanup function to prevent memory leaks
   useEffect(() => {
@@ -320,35 +336,11 @@ export default function Home() {
     }
   }
 
-  const formatDistance = (meters: number): string => {
-    if (meters < 1000) {
-      return `${Math.round(meters)}m`
-    }
-    return `${(meters / 1000).toFixed(1)}km`
-  }
 
   const handleProfileComplete = () => {
     // This will trigger the useEffect to fetch presence and show the main UI
     setProfileCompleted(true)
   }
-
-  // Function to expire old signals
-  const expireOldSignals = async () => {
-    if (!user) return
-    
-    try {
-      const { data, error } = await supabase.rpc('expire_old_signals')
-      if (error) {
-        console.error('Error expiring old signals:', error)
-      } else if (data && data > 0) {
-        console.log(`✅ Expired ${data} old signals`)
-      }
-    } catch (error) {
-      console.error('Error in expireOldSignals:', error)
-    }
-  }
-
-
 
   // Loading state - show skeleton UI only if we're actually loading and have no user
   if (loading && !user && !isAuthenticated) {

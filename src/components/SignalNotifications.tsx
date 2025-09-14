@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { Signal } from '@/lib/signals'
 
@@ -21,7 +21,7 @@ export default function SignalNotifications({ userId }: SignalNotificationsProps
   const [loading, setLoading] = useState(false)
 
   // Fetch incoming signals
-  const fetchIncomingSignals = async () => {
+  const fetchIncomingSignals = useCallback(async () => {
     try {
       // First get the signals (exclude expired ones)
       const { data: signalsData, error: signalsError } = await supabase
@@ -64,7 +64,7 @@ export default function SignalNotifications({ userId }: SignalNotificationsProps
     } catch (error) {
       console.error('Error in fetchIncomingSignals:', error)
     }
-  }
+  }, [userId])
 
   // Handle signal response (accept/ignore)
   const handleSignalResponse = async (signalId: string, response: 'accepted' | 'ignored') => {
@@ -144,7 +144,7 @@ export default function SignalNotifications({ userId }: SignalNotificationsProps
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [userId])
+  }, [userId, fetchIncomingSignals])
 
   // Always show the component for debugging
   // if (incomingSignals.length === 0) {

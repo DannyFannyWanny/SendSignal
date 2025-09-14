@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { User } from '@supabase/supabase-js'
@@ -8,7 +8,7 @@ import { getMinimumDateOfBirth } from '@/lib/utils'
 import { uploadProfileImage } from '@/lib/imageUtils'
 import ImageUpload from '@/components/ImageUpload'
 
-export default function AuthPage() {
+function AuthPageContent() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -59,7 +59,7 @@ export default function AuthPage() {
     )
 
     return () => subscription.unsubscribe()
-  }, [])
+  }, [searchParams])
 
   // Handle redirects in a separate useEffect
   useEffect(() => {
@@ -410,5 +410,33 @@ export default function AuthPage() {
         ) : null}
       </div>
     </main>
+  )
+}
+
+export default function AuthPage() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 flex items-center justify-center p-4" style={{
+        background: 'linear-gradient(to bottom right, #fafafa, #ffffff, #f5f5f5)',
+        minHeight: '100vh',
+        padding: '1rem'
+      }}>
+        <div className="w-full max-w-xs flex flex-col items-center justify-center">
+          <div className="w-full bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-4 sm:p-5 border border-neutral-200/50" style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            backdropFilter: 'blur(8px)',
+            borderRadius: '1rem',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            padding: '1rem',
+            border: '1px solid rgba(229, 229, 229, 0.5)'
+          }}>
+            <div className="w-48 h-8 bg-neutral-200 rounded animate-pulse mb-3"></div>
+            <div className="w-64 h-4 bg-neutral-100 rounded animate-pulse"></div>
+          </div>
+        </div>
+      </main>
+    }>
+      <AuthPageContent />
+    </Suspense>
   )
 }

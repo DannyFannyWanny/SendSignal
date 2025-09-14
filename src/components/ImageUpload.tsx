@@ -1,7 +1,8 @@
 // Image Upload component for profile pictures
 
 import { useState, useRef } from 'react'
-import { validateImageFile, processProfileImage } from '@/lib/imageUtils'
+import Image from 'next/image'
+import { validateImageFile } from '@/lib/imageUtils'
 
 interface ImageUploadProps {
   onImageSelect: (file: File) => void
@@ -66,7 +67,7 @@ export default function ImageUpload({
       // Process and send to parent
       onImageSelect(file)
       setUploading(false)
-    } catch (err) {
+    } catch {
       setError('Failed to process image')
       setUploading(false)
     }
@@ -134,9 +135,11 @@ export default function ImageUpload({
         ) : (
           <div className="space-y-3">
             <div className="mx-auto w-20 h-20">
-              <img
+              <Image
                 src={previewUrl}
                 alt="Profile preview"
+                width={80}
+                height={80}
                 className="w-full h-full rounded-full object-cover border-2 border-white shadow-sm"
               />
             </div>
