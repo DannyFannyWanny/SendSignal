@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { Session, User } from '@supabase/supabase-js'
 
@@ -13,6 +14,7 @@ interface Profile {
 }
 
 export function useSession() {
+  const router = useRouter()
   const [session, setSession] = useState<Session | null>(null)
   const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
@@ -41,7 +43,10 @@ export function useSession() {
       } catch (error) {
         console.error('Error getting initial session:', error)
       } finally {
-        setLoading(false)
+        // Small delay to prevent flashing between loading states
+        setTimeout(() => {
+          setLoading(false)
+        }, 100)
       }
     }
 
@@ -136,6 +141,8 @@ export function useSession() {
   const signOut = async () => {
     try {
       await supabase.auth.signOut()
+      // Redirect to home page after successful sign out
+      router.push('/')
     } catch (error) {
       console.error('Error signing out:', error)
     }

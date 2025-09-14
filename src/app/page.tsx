@@ -350,8 +350,8 @@ export default function Home() {
 
 
 
-  // Loading state - show skeleton UI immediately, don't wait for profile
-  if (loading && !user) {
+  // Loading state - show skeleton UI only if we're actually loading and have no user
+  if (loading && !user && !isAuthenticated) {
     return (
       <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 p-4" style={{
         background: 'linear-gradient(to bottom right, #fafafa, #ffffff, #f5f5f5)',
@@ -415,12 +415,24 @@ export default function Home() {
   // No session - show CTA
   if (!isAuthenticated) {
     return (
-      <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 flex items-center justify-center p-4 sm:p-6" style={{
+      <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 flex flex-col items-center justify-center p-4 sm:p-6" style={{
         background: 'linear-gradient(to bottom right, #fafafa, #ffffff, #f5f5f5)',
         minHeight: '100vh',
-        padding: '1rem'
+        padding: '1rem',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center'
       }}>
-        <div className="w-full max-w-sm mx-auto flex items-center justify-center">
+        {/* Welcome Card - Main Focal Point */}
+        <div className="w-full max-w-md mx-auto mb-6" style={{ 
+          width: '100%', 
+          maxWidth: '28rem', 
+          margin: '0 auto 1.5rem auto',
+          display: 'flex',
+          justifyContent: 'center'
+        }}>
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-4 sm:p-5 border border-neutral-200/50" style={{
             backgroundColor: 'rgba(255, 255, 255, 0.8)',
             backdropFilter: 'blur(8px)',
@@ -448,7 +460,7 @@ export default function Home() {
             </p>
             
             {/* Sign In Button - Main Focal Point */}
-            <div className="text-center mb-8">
+            <div className="text-center">
               <button
                 onClick={() => router.push('/auth')}
                 className="inline-block bg-neutral-900 hover:bg-neutral-800 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg text-base"
@@ -464,15 +476,22 @@ export default function Home() {
           </div>
         </div>
         
-        {/* Create Account Card - Secondary Section */}
-        <div className="w-full max-w-sm mx-auto mt-8">
+        {/* Create Account Card - Secondary Section - Lower */}
+        <div className="w-full max-w-md mx-auto" style={{ 
+          width: '100%', 
+          maxWidth: '28rem', 
+          margin: '0 auto',
+          display: 'flex',
+          justifyContent: 'center'
+        }}>
           <div className="bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg p-4 border border-neutral-200/30" style={{
             backgroundColor: 'rgba(255, 255, 255, 0.6)',
             backdropFilter: 'blur(8px)',
             borderRadius: '1rem',
             boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
             padding: '1rem',
-            border: '1px solid rgba(229, 229, 229, 0.3)'
+            border: '1px solid rgba(229, 229, 229, 0.3)',
+            width: '100%'
           }}>
             <div className="text-center">
               <p className="text-sm text-neutral-500 mb-3">
@@ -496,7 +515,7 @@ export default function Home() {
   }
 
   // Session exists but no profile - show profile form or skeleton while loading
-  if (!hasProfile) {
+  if (isAuthenticated && !hasProfile) {
     // If we're still loading profile, show skeleton UI instead of blocking
     if (profileLoading) {
       return (

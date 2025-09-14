@@ -227,47 +227,55 @@ export default function AuthPage() {
               </h1>
               
               <form onSubmit={handleAuth} className="space-y-6 sm:space-y-7">
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-neutral-700 mb-2">
-                    Email
-                  </label>
-                  <input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-500 focus:border-transparent transition-all duration-200 text-base"
-                    placeholder="Enter your email"
-                    style={{
-                      borderRadius: '0.5rem',
-                      border: '1px solid #d4d4d4',
-                      transition: 'all 0.2s'
-                    }}
-                  />
+                <div className="flex justify-center">
+                  <div className="w-full" style={{ maxWidth: '280px', width: '100%' }}>
+                    <label htmlFor="email" className="block text-sm font-medium text-neutral-700 mb-2">
+                      Email
+                    </label>
+                    <input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-500 focus:border-transparent transition-all duration-200 text-base"
+                      placeholder="Enter your email"
+                      style={{
+                        borderRadius: '0.5rem',
+                        border: '1px solid #d4d4d4',
+                        transition: 'all 0.2s',
+                        maxWidth: '280px',
+                        width: '100%'
+                      }}
+                    />
+                  </div>
                 </div>
                 
-                <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-neutral-700 mb-2">
-                    Password
-                  </label>
-                  <input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-500 focus:border-transparent transition-all duration-200 text-base"
-                    placeholder="Enter your password"
-                    style={{
-                      borderRadius: '0.5rem',
-                      border: '1px solid #d4d4d4',
-                      transition: 'all 0.2s'
-                    }}
-                  />
+                <div className="flex justify-center">
+                  <div className="w-full" style={{ maxWidth: '280px', width: '100%' }}>
+                    <label htmlFor="password" className="block text-sm font-medium text-neutral-700 mb-2">
+                      Password
+                    </label>
+                    <input
+                      id="password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-500 focus:border-transparent transition-all duration-200 text-base"
+                      placeholder="Enter your password"
+                      style={{
+                        borderRadius: '0.5rem',
+                        border: '1px solid #d4d4d4',
+                        transition: 'all 0.2s',
+                        maxWidth: '280px',
+                        width: '100%'
+                      }}
+                    />
+                  </div>
                 </div>
                 
-                <div className="text-center">
+                <div className="text-center mt-12">
                   <button
                     type="submit"
                     disabled={loading}
@@ -314,47 +322,55 @@ export default function AuthPage() {
               Complete Your Profile
             </h1>
             <form onSubmit={handleProfileSubmit} className="space-y-6 sm:space-y-7">
-              <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-neutral-700 mb-2">
-                  First Name
-                </label>
-                <input
-                  id="firstName"
-                  type="text"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  required
-                  className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-500 focus:border-transparent transition-all duration-200 text-base"
-                  placeholder="Enter your first name"
-                  style={{
-                    borderRadius: '0.5rem',
-                    border: '1px solid #d4d4d4',
-                    transition: 'all 0.2s'
-                  }}
-                />
+              <div className="flex justify-center">
+                <div className="w-full" style={{ maxWidth: '280px', width: '100%' }}>
+                  <label htmlFor="firstName" className="block text-sm font-medium text-neutral-700 mb-2">
+                    First Name
+                  </label>
+                  <input
+                    id="firstName"
+                    type="text"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    required
+                    className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-500 focus:border-transparent transition-all duration-200 text-base"
+                    placeholder="Enter your first name"
+                    style={{
+                      borderRadius: '0.5rem',
+                      border: '1px solid #d4d4d4',
+                      transition: 'all 0.2s',
+                      maxWidth: '280px',
+                      width: '100%'
+                    }}
+                  />
+                </div>
               </div>
               
-              <div>
-                <label htmlFor="dateOfBirth" className="block text-sm font-medium text-neutral-700 mb-2">
-                  Date of Birth
-                </label>
-                <input
-                  id="dateOfBirth"
-                  type="date"
-                  value={dateOfBirth}
-                  onChange={(e) => setDateOfBirth(e.target.value)}
-                  required
-                  max={getMinimumDateOfBirth()}
-                  className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-500 focus:border-transparent transition-all duration-200 text-base"
-                  style={{
-                    borderRadius: '0.5rem',
-                    border: '1px solid #d4d4d4',
-                    transition: 'all 0.2s'
-                  }}
-                />
-                <p className="mt-1 text-xs text-neutral-500">
-                  You must be 18 or older to use this app
-                </p>
+              <div className="flex justify-center">
+                <div className="w-full" style={{ maxWidth: '280px', width: '100%' }}>
+                  <label htmlFor="dateOfBirth" className="block text-sm font-medium text-neutral-700 mb-2">
+                    Date of Birth
+                  </label>
+                  <input
+                    id="dateOfBirth"
+                    type="date"
+                    value={dateOfBirth}
+                    onChange={(e) => setDateOfBirth(e.target.value)}
+                    required
+                    max={getMinimumDateOfBirth()}
+                    className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-500 focus:border-transparent transition-all duration-200 text-base"
+                    style={{
+                      borderRadius: '0.5rem',
+                      border: '1px solid #d4d4d4',
+                      transition: 'all 0.2s',
+                      maxWidth: '280px',
+                      width: '100%'
+                    }}
+                  />
+                  <p className="mt-1 text-xs text-neutral-500 text-center">
+                    You must be 18 or older to use this app
+                  </p>
+                </div>
               </div>
               
               <div>
@@ -370,7 +386,7 @@ export default function AuthPage() {
                 </p>
               </div>
               
-              <div className="text-center">
+              <div className="text-center mt-12">
                 <button
                   type="submit"
                   disabled={profileLoading}

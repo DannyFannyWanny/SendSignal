@@ -40,7 +40,7 @@ export default function Header() {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
-    router.push('/auth')
+    router.push('/')
   }
 
   return (
@@ -56,7 +56,7 @@ export default function Header() {
         <div className="flex items-center justify-between">
           {/* Brand */}
           <div className="flex items-center space-x-2 sm:space-x-3">
-            <div className="flex items-center justify-center w-8 h-8 bg-white rounded-2xl shadow-sm border border-gray-200" style={{
+            <div className="flex items-center justify-center w-8 h-8 bg-white rounded-2xl shadow-sm" style={{
               width: '2rem',
               height: '2rem',
               borderRadius: '1rem',
@@ -83,7 +83,7 @@ export default function Header() {
 
           {/* Auth Status */}
           <div className="flex items-center space-x-2 sm:space-x-3">
-            {user ? (
+            {user && (
               <button
                 onClick={handleSignOut}
                 className="px-2.5 py-1.5 text-sm text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-md transition-colors duration-200"
@@ -93,20 +93,6 @@ export default function Header() {
                 }}
               >
                 Sign out
-              </button>
-            ) : (
-              <button
-                onClick={() => {
-                  console.log('🔍 Sign in button clicked, navigating to /auth')
-                  router.push('/auth')
-                }}
-                className="px-3 py-1.5 text-sm text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-md transition-colors duration-200"
-                style={{
-                  borderRadius: '0.375rem',
-                  transition: 'all 0.2s'
-                }}
-              >
-                Sign in
               </button>
             )}
           </div>
