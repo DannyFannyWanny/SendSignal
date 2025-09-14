@@ -460,6 +460,33 @@ export default function Home() {
                 Sign In
               </button>
             </div>
+            
+            {/* Create Account Section */}
+            <div className="w-full mt-6 bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg p-4 border border-neutral-200/30" style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.6)',
+              backdropFilter: 'blur(8px)',
+              borderRadius: '1rem',
+              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+              padding: '1rem',
+              border: '1px solid rgba(229, 229, 229, 0.3)',
+              marginTop: '1.5rem'
+            }}>
+              <div className="text-center">
+                <p className="text-sm text-neutral-600 mb-3">
+                  Don&apos;t have an account?
+                </p>
+                <button
+                  onClick={() => router.push('/auth?mode=signup')}
+                  className="inline-block bg-neutral-100 hover:bg-neutral-200 text-neutral-800 font-medium py-2 px-4 rounded-lg transition-all duration-200 border border-neutral-300 hover:border-neutral-400"
+                  style={{
+                    borderRadius: '0.5rem',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  Create Account
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </main>
