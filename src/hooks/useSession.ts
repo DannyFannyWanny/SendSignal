@@ -28,14 +28,8 @@ export function useSession() {
         setUser(session?.user || null)
         
         if (session?.user) {
-          // Much more aggressive timeout - don't wait for profile
-          setLoading(false) // Show UI immediately
-          
-          // Fetch profile in background (non-blocking)
-          fetchProfile(session.user.id).catch(error => {
-            console.error('Profile fetch failed:', error)
-            setProfile(null)
-          })
+          // Wait for profile to load before showing UI
+          await fetchProfile(session.user.id)
         }
       } catch (error) {
         console.error('Error getting initial session:', error)
@@ -53,9 +47,12 @@ export function useSession() {
         setUser(session?.user || null)
         
         if (event === 'SIGNED_IN' && session?.user) {
+          setLoading(true) // Show loading while fetching profile
           await fetchProfile(session.user.id)
+          setLoading(false)
         } else if (event === 'SIGNED_OUT') {
           setProfile(null)
+          setLoading(false)
         }
       }
     )
@@ -65,9 +62,9 @@ export function useSession() {
 
   const fetchProfile = async (userId: string) => {
     try {
-      // Much more aggressive timeout - 3 seconds max
+      // Reasonable timeout - 5 seconds max
       const timeoutPromise = new Promise<never>((_, reject) => {
-        setTimeout(() => reject(new Error('Profile fetch timeout after 3 seconds')), 3000)
+        setTimeout(() => reject(new Error('Profile fetch timeout after 5 seconds')), 5000)
       })
       
       const fetchPromise = supabase
@@ -81,6 +78,7 @@ export function useSession() {
 
       if (error) {
         console.error('Error fetching profile:', error)
+        setProfile(null)
         return
       }
 
